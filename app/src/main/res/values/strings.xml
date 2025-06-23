@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">MID</string>
+    <string name="call_logs">Call Logs</string>
+    <string name="storage_test">Storage Test</string>
+    <string name="call_logs_desc">Call logs icon</string>
+    <string name="storage_test_desc">Storage test icon</string>
+</resources>

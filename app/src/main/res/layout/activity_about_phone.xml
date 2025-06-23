@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@android:color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@android:color/holo_blue_light">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/aboutPhoneText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Device Information"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:paddingBottom="8dp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@android:color/darker_gray"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/deviceNameText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Device: "
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:paddingBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/manufacturerText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Manufacturer: "
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:paddingBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/androidVersionText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Android Version: "
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:paddingBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/kernelVersionText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Kernel Version: "
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:paddingBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/imeiText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="IMEI: "
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:paddingBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/ramText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Total RAM: "
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:paddingBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/storageText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Internal Storage: "
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:paddingBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/modelNumberText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Model Number: "
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:paddingBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/boardText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Board: "
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:paddingBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/openGlText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="OpenGL ES: "
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:paddingBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/apiLevelText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="API Level: "
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:paddingBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/kernelArchText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Kernel Architecture: "
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:paddingBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/rootAccessText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Root Access: "
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:paddingBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/googlePlayServicesText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Google Play Services: "
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:paddingBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/uptimeText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="System Uptime: "
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:paddingBottom="8dp" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <ImageView
+            android:id="@+id/phoneHardwareImage"
+            android:layout_width="400dp"
+            android:layout_height="400dp"
+            android:layout_marginTop="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/phone_hardware_image" />
+
+    </LinearLayout>
+
+</ScrollView>
