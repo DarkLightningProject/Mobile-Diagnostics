@@ -284,7 +284,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:text="@string/call_logs"
-                        android:textColor="@color/black"
+                        android:textColor="?android:textColorPrimary"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         android:paddingTop="8dp"/>
@@ -322,7 +322,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:text="@string/storage_test"
-                        android:textColor="@color/black"
+                        android:textColor="?android:textColorPrimary"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         android:paddingTop="8dp"/>
