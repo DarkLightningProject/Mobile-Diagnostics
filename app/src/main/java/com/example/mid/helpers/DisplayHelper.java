@@ -1,15 +1,17 @@
 package com.example.mid.helpers;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
+import android.view.WindowMetrics;
 
 public class DisplayHelper {
     public static String getScreenResolution(Context context) {
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        DisplayMetrics metrics = new DisplayMetrics();
-        wm.getDefaultDisplay().getMetrics(metrics);
-        return metrics.widthPixels + " x " + metrics.heightPixels + " pixels";
+        WindowMetrics windowMetrics = wm.getCurrentWindowMetrics();
+        Rect bounds = windowMetrics.getBounds();
+        return bounds.width() + " x " + bounds.height() + " pixels";
     }
 
     public static String getScreenDensity(Context context) {
@@ -19,11 +21,12 @@ public class DisplayHelper {
 
     public static String getScreenSizeInches(Context context) {
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        DisplayMetrics metrics = new DisplayMetrics();
-        wm.getDefaultDisplay().getMetrics(metrics);
+        WindowMetrics windowMetrics = wm.getCurrentWindowMetrics();
+        Rect bounds = windowMetrics.getBounds();
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
 
-        float widthInches = metrics.widthPixels / metrics.xdpi;
-        float heightInches = metrics.heightPixels / metrics.ydpi;
+        float widthInches = bounds.width() / metrics.xdpi;
+        float heightInches = bounds.height() / metrics.ydpi;
         double diagonalInches = Math.sqrt(Math.pow(widthInches, 2) + Math.pow(heightInches, 2));
         return String.format("%.1f inches", diagonalInches);
     }

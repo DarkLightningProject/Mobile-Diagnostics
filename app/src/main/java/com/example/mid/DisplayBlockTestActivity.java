@@ -4,6 +4,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
 import android.widget.Button;
 import android.widget.GridLayout;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,10 +23,11 @@ public class DisplayBlockTestActivity extends AppCompatActivity {
         setContentView(R.layout.activity_display_block_test);
 
         // Fullscreen immersive mode
-        getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        WindowInsetsController controller = getWindow().getInsetsController();
+        if (controller != null) {
+            controller.hide(WindowInsets.Type.statusBars() | WindowInsets.Type.navigationBars());
+            controller.setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+        }
 
         blockGrid = findViewById(R.id.blockGrid);
         Button resetButton = findViewById(R.id.btnReset);
@@ -62,13 +65,14 @@ public class DisplayBlockTestActivity extends AppCompatActivity {
 
                 block.setLayoutParams(params);
                 block.setBackgroundColor(INITIAL_COLOR);
+                block.setTag(INITIAL_COLOR); // track current color via tag
 
                 // Set touch listener
                 block.setOnClickListener(v -> {
-                    int currentColor = ((View) v).getBackgroundTintList() != null ?
-                            ((View) v).getBackgroundTintList().getDefaultColor() : INITIAL_COLOR;
-                    int newIndex = (getColorIndex(currentColor) + 1) % colors.length;
-                    v.setBackgroundColor(colors[newIndex]);
+                    int currentColor = (int) v.getTag();
+                    int newColor = colors[(getColorIndex(currentColor) + 1) % colors.length];
+                    v.setBackgroundColor(newColor);
+                    v.setTag(newColor);
                 });
 
                 blockGrid.addView(block);
@@ -89,12 +93,12 @@ public class DisplayBlockTestActivity extends AppCompatActivity {
         for (int i = 0; i < blockGrid.getChildCount(); i++) {
             View block = blockGrid.getChildAt(i);
             block.setBackgroundColor(INITIAL_COLOR);
+            block.setTag(INITIAL_COLOR);
         }
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        finish();
     }
 }

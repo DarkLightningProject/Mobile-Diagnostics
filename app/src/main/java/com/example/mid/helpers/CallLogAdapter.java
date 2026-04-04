@@ -38,39 +38,44 @@ public class CallLogAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        ViewHolder holder;
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.call_log_item, parent, false);
+            holder = new ViewHolder(convertView);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
         }
-
-        TextView nameText = convertView.findViewById(R.id.contactName);
-        LinearLayout detailsLayout = convertView.findViewById(R.id.detailsLayout);
-        TextView numberText = convertView.findViewById(R.id.phoneNumber);
-        TextView typeText = convertView.findViewById(R.id.callType);
-        TextView durationText = convertView.findViewById(R.id.callDuration);
-        TextView dateText = convertView.findViewById(R.id.callDate);
 
         CallLogEntry entry = callLogs.get(position);
 
-        // Ensure contact name is not null
         String contactName = entry.getContactName();
-        nameText.setText((contactName != null && !contactName.isEmpty()) ? contactName : entry.getPhoneNumber());
+        holder.nameText.setText((contactName != null && !contactName.isEmpty()) ? contactName : entry.getPhoneNumber());
+        holder.numberText.setText("📲 " + entry.getPhoneNumber());
+        holder.typeText.setText(entry.getCallType());
+        holder.durationText.setText("⏳ " + entry.getCallDuration() + " sec");
+        holder.dateText.setText("🗓️ " + entry.getCallDate());
+        holder.detailsLayout.setVisibility(entry.isExpanded() ? View.VISIBLE : View.GONE);
 
-        // Set details
-        numberText.setText("📲 " + entry.getPhoneNumber());
-        typeText.setText(entry.getCallType());
-        durationText.setText("⏳ " + entry.getCallDuration() + " sec");
-
-        dateText.setText("🗓️ " + entry.getCallDate());
-
-        // Toggle details when clicked
         convertView.setOnClickListener(v -> {
             entry.setExpanded(!entry.isExpanded());
-            detailsLayout.setVisibility(entry.isExpanded() ? View.VISIBLE : View.GONE);
+            holder.detailsLayout.setVisibility(entry.isExpanded() ? View.VISIBLE : View.GONE);
         });
 
-        // Ensure correct visibility state
-        detailsLayout.setVisibility(entry.isExpanded() ? View.VISIBLE : View.GONE);
-
         return convertView;
+    }
+
+    private static class ViewHolder {
+        final TextView nameText, numberText, typeText, durationText, dateText;
+        final LinearLayout detailsLayout;
+
+        ViewHolder(View view) {
+            nameText = view.findViewById(R.id.contactName);
+            detailsLayout = view.findViewById(R.id.detailsLayout);
+            numberText = view.findViewById(R.id.phoneNumber);
+            typeText = view.findViewById(R.id.callType);
+            durationText = view.findViewById(R.id.callDuration);
+            dateText = view.findViewById(R.id.callDate);
+        }
     }
 }

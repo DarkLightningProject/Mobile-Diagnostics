@@ -61,6 +61,9 @@ public class SimSettingsActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
             requiredPermissions.add(Manifest.permission.READ_PHONE_STATE);
         }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_NUMBERS) != PackageManager.PERMISSION_GRANTED) {
+            requiredPermissions.add(Manifest.permission.READ_PHONE_NUMBERS);
+        }
         if (!requiredPermissions.isEmpty()) {
             ActivityCompat.requestPermissions(this, requiredPermissions.toArray(new String[0]), PERMISSION_REQUEST_CODE);
         } else {
@@ -71,8 +74,12 @@ public class SimSettingsActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PERMISSION_REQUEST_CODE && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            executorService.execute(this::setupSimSelection);
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            // Only need READ_PHONE_STATE to proceed; READ_PHONE_NUMBERS is best-effort
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                executorService.execute(this::setupSimSelection);
+            }
         }
     }
 

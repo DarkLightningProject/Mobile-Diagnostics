@@ -20,19 +20,23 @@ public class StorageHelper {
     }
 
     private static String getStorageInfo(File path) {
-        StatFs stat = new StatFs(path.getAbsolutePath());
-        long blockSize = stat.getBlockSizeLong();
-        long totalBlocks = stat.getBlockCountLong();
-        long availableBlocks = stat.getAvailableBlocksLong();
+        try {
+            StatFs stat = new StatFs(path.getAbsolutePath());
+            long blockSize = stat.getBlockSizeLong();
+            long totalBlocks = stat.getBlockCountLong();
+            long availableBlocks = stat.getAvailableBlocksLong();
 
-        long total = totalBlocks * blockSize;
-        long free = availableBlocks * blockSize;
-        long used = total - free;
+            long total = totalBlocks * blockSize;
+            long free = availableBlocks * blockSize;
+            long used = total - free;
 
-        return String.format(
-                "Total: %s\nUsed: %s\nFree: %s",
-                formatSize(total), formatSize(used), formatSize(free)
-        );
+            return String.format(
+                    "Total: %s\nUsed: %s\nFree: %s",
+                    formatSize(total), formatSize(used), formatSize(free)
+            );
+        } catch (Exception e) {
+            return "Storage info unavailable";
+        }
     }
 
     private static String formatSize(long size) {

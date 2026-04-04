@@ -104,10 +104,11 @@ public class CpuInfoHelper {
     private static String getSystemProperty(String property) {
         try {
             Process process = Runtime.getRuntime().exec("getprop " + property);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String value = reader.readLine();
-            reader.close();
-            return (value != null && !value.isEmpty()) ? value : null;
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String value = reader.readLine();
+                process.destroy();
+                return (value != null && !value.isEmpty()) ? value : null;
+            }
         } catch (IOException e) {
             return null;
         }
@@ -137,42 +138,6 @@ public class CpuInfoHelper {
         } catch (Exception e) {
             return 0;
         }
-    }
-
-    public static String getLiveCpuInfo() {
-        StringBuilder info = new StringBuilder();
-
-        try {
-            // Get CPU architecture
-            String arch = System.getProperty("os.arch");
-            int cores = getCoreCount();
-
-            info.append("Architecture: ").append(arch).append("\n");
-            info.append("Cores: ").append(cores).append("\n\n");
-
-            // Detect and display Big/Little clusters
-            HashMap<String, List<Integer>> clusters = detectClusters();
-            for (String cluster : clusters.keySet()) {
-                info.append(cluster).append(" (Cores ");
-                for (int core : clusters.get(cluster)) {
-                    info.append(core).append(", ");
-                }
-                info.delete(info.length() - 2, info.length()); // Remove last comma
-                info.append(")\n");
-            }
-
-            // Display per-core details
-            for (int i = 0; i < cores; i++) {
-                info.append("\nCore ").append(i).append(":\n");
-                info.append("Frequency: ").append(getCurrentFreq(i)).append(" MHz\n");
-                info.append("Governor: ").append(getGovernor(i)).append("\n");
-                info.append("Usage: ").append(getCoreUsage(i)).append("%\n");
-            }
-
-        } catch (Exception e) {
-            return "SOC Info Unavailable";
-        }
-        return info.toString();
     }
 
     public static int getCoreCount() {

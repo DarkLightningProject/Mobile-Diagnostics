@@ -4,8 +4,9 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
+import android.net.LinkProperties;
+import android.net.Network;
 import android.net.NetworkCapabilities;
-import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -15,100 +16,136 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
-import java.net.SocketException;
+import java.net.Socket;
 import java.util.Collections;
-import java.util.List;
+import java.util.Enumeration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import android.net.wifi.WifiInfo;
 
 public class WifiSettingsActivity extends AppCompatActivity {
 
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    // Two executors: fast WiFi reads never block behind slow ping/jitter I/O
+    private final ExecutorService wifiExecutor     = Executors.newSingleThreadExecutor();
+    private final ExecutorService internetExecutor = Executors.newSingleThreadExecutor();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     private ConnectivityManager connectivityManager;
     private ConnectivityManager.NetworkCallback networkCallback;
 
-    private static final long UPDATE_INTERVAL = 3000; // 3 seconds
-    private static final int LOCATION_PERMISSION_REQUEST = 1001;
+    // Captured inside onCapabilitiesChanged (API 31+) where it is non-redacted
+    private volatile WifiInfo lastKnownWifiInfo = null;
 
-    private final Runnable updateRunnable = new Runnable() {
-        @Override
-        public void run() {
-            updateWifiInfo();
-            mainHandler.postDelayed(this, UPDATE_INTERVAL);
+    private static final long INTERNET_UPDATE_INTERVAL = 5000; // ms
+    private static final int  LOCATION_PERMISSION_REQUEST = 1001;
+
+    private final Runnable internetUpdateRunnable = new Runnable() {
+        @Override public void run() {
+            updateInternetStatus();
+            mainHandler.postDelayed(this, INTERNET_UPDATE_INTERVAL);
         }
     };
 
-    private boolean isInternetAccessible() {
-        try {
-            // Try to reach Google's DNS server
-            InetAddress inetAddress = InetAddress.getByName("8.8.8.8");
-            return inetAddress.isReachable(1000); // Timeout: 1 second
-        } catch (Exception e) {
-            return false;
-        }
-    }
+    // -------------------------------------------------------------------------
+    // Lifecycle
+    // -------------------------------------------------------------------------
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wifi);
-        connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        networkCallback = new ConnectivityManager.NetworkCallback() {
-            @Override
-            public void onAvailable(android.net.Network network) {
-                mainHandler.post(() -> updateWifiInfo()); // Update UI immediately when network changes
-            }
 
-            @Override
-            public void onLost(android.net.Network network) {
-                mainHandler.post(() -> updateWifiInfo()); // Update UI when network is lost
-            }
-        };
+        connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        setupNetworkCallback();
         connectivityManager.registerDefaultNetworkCallback(networkCallback);
 
-
-        // Check and request permissions
         if (checkPermissions()) {
-            mainHandler.post(updateRunnable);
+            updateWifiDetails();
+            mainHandler.post(internetUpdateRunnable);
         }
     }
 
-    private void clearWifiDetails() {
-        runOnUiThread(() -> {
-            TextView ssidText = findViewById(R.id.ssidText);
-            TextView ipText = findViewById(R.id.ipText);
-            TextView rssiText = findViewById(R.id.rssiText);
-            TextView linkSpeedText = findViewById(R.id.linkSpeedText);
-            TextView frequencyText = findViewById(R.id.frequencyText);
-            TextView bssidText = findViewById(R.id.bssidText);
-            TextView wifiStandardText = findViewById(R.id.wifiStandardText);
-
-            ssidText.setText("SSID: N/A");
-            ipText.setText("IP: N/A");
-            rssiText.setText("RSSI: N/A");
-            linkSpeedText.setText("Link Speed: N/A");
-            frequencyText.setText("Frequency: N/A");
-            bssidText.setText("BSSID: N/A");
-            wifiStandardText.setText("Wi-Fi Standard: N/A");
-        });
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (connectivityManager != null && networkCallback != null) {
+            connectivityManager.unregisterNetworkCallback(networkCallback);
+        }
+        mainHandler.removeCallbacks(internetUpdateRunnable);
+        wifiExecutor.shutdownNow();
+        internetExecutor.shutdownNow();
     }
 
+    // -------------------------------------------------------------------------
+    // Network callback setup
+    // -------------------------------------------------------------------------
 
+    private void setupNetworkCallback() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            // FLAG_INCLUDE_LOCATION_INFO: onCapabilitiesChanged delivers a non-redacted
+            // WifiInfo (real SSID/BSSID) when location permission is granted.
+            networkCallback = new ConnectivityManager.NetworkCallback(
+                    ConnectivityManager.NetworkCallback.FLAG_INCLUDE_LOCATION_INFO) {
+
+                @Override public void onAvailable(Network network) {
+                    mainHandler.post(WifiSettingsActivity.this::updateWifiDetails);
+                }
+
+                @Override public void onCapabilitiesChanged(Network network, NetworkCapabilities caps) {
+                    // Only place where getTransportInfo() returns unredacted WifiInfo on API 31+
+                    android.net.TransportInfo ti = caps.getTransportInfo();
+                    lastKnownWifiInfo = (ti instanceof WifiInfo) ? (WifiInfo) ti : null;
+                    mainHandler.post(WifiSettingsActivity.this::updateWifiDetails);
+                }
+
+                @Override public void onLinkPropertiesChanged(Network network, LinkProperties lp) {
+                    // Fires on IP changes: VPN connect/disconnect, DHCP renewal
+                    mainHandler.post(WifiSettingsActivity.this::updateWifiDetails);
+                }
+
+                @Override public void onLost(Network network) {
+                    lastKnownWifiInfo = null;
+                    mainHandler.post(WifiSettingsActivity.this::updateWifiDetails);
+                }
+            };
+        } else {
+            // API 30: onCapabilitiesChanged is available (API 26+); WifiInfo is read
+            // via WifiManager.getConnectionInfo() inside updateWifiDetails().
+            networkCallback = new ConnectivityManager.NetworkCallback() {
+
+                @Override public void onAvailable(Network network) {
+                    mainHandler.post(WifiSettingsActivity.this::updateWifiDetails);
+                }
+
+                @Override public void onCapabilitiesChanged(Network network, NetworkCapabilities caps) {
+                    mainHandler.post(WifiSettingsActivity.this::updateWifiDetails);
+                }
+
+                @Override public void onLinkPropertiesChanged(Network network, LinkProperties lp) {
+                    mainHandler.post(WifiSettingsActivity.this::updateWifiDetails);
+                }
+
+                @Override public void onLost(Network network) {
+                    mainHandler.post(WifiSettingsActivity.this::updateWifiDetails);
+                }
+            };
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Permissions
+    // -------------------------------------------------------------------------
 
     private boolean checkPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q &&
-                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     LOCATION_PERMISSION_REQUEST);
@@ -118,165 +155,194 @@ public class WifiSettingsActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == LOCATION_PERMISSION_REQUEST) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                mainHandler.post(updateRunnable);
+                updateWifiDetails();
+                mainHandler.post(internetUpdateRunnable);
             } else {
-                TextView internetStatusText = findViewById(R.id.internetStatusText);
-                internetStatusText.setText("Location permission needed for network details");
+                updateUi(() -> ((TextView) findViewById(R.id.internetStatusText))
+                        .setText("Location permission needed for network details"));
             }
         }
     }
 
-    private void updateWifiInfo() {
-        executorService.execute(() -> {
+    // -------------------------------------------------------------------------
+    // UI helper — skips update if activity is already finishing/destroyed
+    // -------------------------------------------------------------------------
+
+    private void updateUi(Runnable action) {
+        if (!isFinishing() && !isDestroyed()) {
+            runOnUiThread(action);
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Fast path: WiFi detail fields (no network I/O)
+    // Called on every NetworkCallback event → real-time RSSI, IP, link speed
+    // -------------------------------------------------------------------------
+
+    private void updateWifiDetails() {
+        wifiExecutor.execute(() -> {
             try {
-                boolean hasInternet = isConnectedToInternet();
-                boolean isWifi;
-                boolean isMobile;
-
                 ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-                NetworkInfo activeNetwork = null;
+                NetworkCapabilities caps = (cm != null)
+                        ? cm.getNetworkCapabilities(cm.getActiveNetwork()) : null;
 
-                if (cm != null) {
-                    activeNetwork = cm.getActiveNetworkInfo();
-                }
-
-                if (activeNetwork != null) {
-                    isWifi = activeNetwork.getType() == ConnectivityManager.TYPE_WIFI;
-                    isMobile = activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE;
-                } else {
-                    isWifi = false;
-                    isMobile = false;
-                }
+                boolean isWifi   = caps != null && caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI);
+                boolean isMobile = caps != null && caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR);
 
                 if (!isWifi) {
                     clearWifiDetails();
+                    updateConnectionTitle(false, isMobile);
+                    return;
                 }
 
-                // Update Internet Status
-                runOnUiThread(() -> {
-                    TextView internetStatusText = findViewById(R.id.internetStatusText);
-                    if (hasInternet) {
-                        internetStatusText.setText("Internet: Connected ✅");
-                    } else {
-                        internetStatusText.setText("Internet: Not Connected ❌ (No Active Data)");
-                    }
-                });
-
-                // Update Ping and Jitter
-                if (hasInternet) {
-                    String latency = getNetworkLatency("8.8.8.8");
-                    String jitter = getJitter("8.8.8.8");
-
-
-
-                    runOnUiThread(() -> {
-                        TextView pingText = findViewById(R.id.pingText);
-                        TextView jitterText = findViewById(R.id.jitterText);
-                        pingText.setText("Ping: " + latency + " ms");
-                        jitterText.setText("Jitter: " + jitter + " ms");
-                    });
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    updateUi(() -> ((TextView) findViewById(R.id.wifiDetailsTitle))
+                            .setText("(Enable location permission for full details)"));
+                    return;
                 }
 
-                // Update Wi-Fi Details
-                if (isWifi) {
-                    WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                    if (wifiManager != null && checkPermissions()) {
-                        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-                        if (wifiInfo != null && wifiInfo.getNetworkId() != -1) {
-                            String bssid = wifiInfo.getBSSID();
-                            boolean isValidBssid = bssid != null &&
-                                    !bssid.equals("02:00:00:00:00:00") &&
-                                    !bssid.equals("00:00:00:00:00:00");
+                WifiInfo wifiInfo = getWifiInfo();
 
-                            String ssid = wifiInfo.getSSID().replace("\"", "");
-                            String ipAddress = getIpAddress();
-                            int rssi = wifiInfo.getRssi();
-                            int linkSpeed = wifiInfo.getLinkSpeed();
-                            String frequency = getFrequencyBand(wifiInfo.getFrequency());
+                if (wifiInfo == null || wifiInfo.getNetworkId() == -1) {
+                    // Connected to WiFi but info not yet available — show title, clear fields
+                    clearWifiDetails();
+                    updateConnectionTitle(true, false);
+                    return;
+                }
 
-                            runOnUiThread(() -> {
-                                TextView ssidText = findViewById(R.id.ssidText);
-                                TextView ipText = findViewById(R.id.ipText);
-                                TextView rssiText = findViewById(R.id.rssiText);
-                                TextView linkSpeedText = findViewById(R.id.linkSpeedText);
-                                TextView frequencyText = findViewById(R.id.frequencyText);
-                                TextView bssidText = findViewById(R.id.bssidText);
-                                TextView wifiStandardText = findViewById(R.id.wifiStandardText);
+                // SSID: getSSID() wraps with quotes and can return "<unknown ssid>" or null
+                String rawSsid = wifiInfo.getSSID();
+                String ssid = (rawSsid != null) ? rawSsid.replace("\"", "") : "Unknown";
+                if (ssid.equals("<unknown ssid>") || ssid.isEmpty()) ssid = "Unknown";
 
-                                ssidText.setText("SSID: " + ssid);
-                                ipText.setText("IP: " + ipAddress);
-                                rssiText.setText("RSSI: " + rssi + " dBm");
-                                linkSpeedText.setText("Link Speed: " + linkSpeed + " Mbps");
-                                frequencyText.setText("Frequency: " + frequency);
+                String bssid = wifiInfo.getBSSID();
+                boolean validBssid = bssid != null
+                        && !bssid.equals("02:00:00:00:00:00")
+                        && !bssid.equals("00:00:00:00:00:00");
 
-                                if (isValidBssid) {
-                                    bssidText.setText("BSSID: " + bssid.toUpperCase());
-                                } else {
-                                    bssidText.setText("BSSID: N/A");
-                                }
+                String ipAddress = getIpAddress();
 
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                                    String standard = getWifiStandard(wifiInfo.getWifiStandard());
-                                    wifiStandardText.setText("Wi-Fi Standard: " + standard);
-                                } else {
-                                    wifiStandardText.setText("Wi-Fi Standard: N/A");
-                                }
-                            });
-                        }
-                    }
-                } runOnUiThread(() -> {
-                    TextView wifiDetailsTitle = findViewById(R.id.wifiDetailsTitle);
-                    if (isWifi) {
-                        wifiDetailsTitle.setText("Wi-Fi Details"); // Or set to appropriate title
-                    } else if (isMobile) {
-                        wifiDetailsTitle.setText("Connected to Mobile Data");
-                    } else {
-                        wifiDetailsTitle.setText(""); // Not connected to either
-                    }
+                int    rssiRaw   = wifiInfo.getRssi();
+                String rssiStr   = (rssiRaw == Integer.MIN_VALUE) ? "Unknown" : rssiRaw + " dBm";
+
+                int    speedRaw  = wifiInfo.getLinkSpeed();
+                String speedStr  = (speedRaw < 0) ? "Unknown" : speedRaw + " Mbps";
+
+                String frequency = getFrequencyBand(wifiInfo.getFrequency());
+                String standard  = getWifiStandard(wifiInfo.getWifiStandard());
+
+                // Capture finals for lambda
+                final String displaySsid  = ssid;
+                final String displayBssid = validBssid ? bssid.toUpperCase() : "N/A";
+
+                updateUi(() -> {
+                    ((TextView) findViewById(R.id.ssidText)).setText("SSID: " + displaySsid);
+                    ((TextView) findViewById(R.id.ipText)).setText("IP: " + ipAddress);
+                    ((TextView) findViewById(R.id.rssiText)).setText("RSSI: " + rssiStr);
+                    ((TextView) findViewById(R.id.linkSpeedText)).setText("Link Speed: " + speedStr);
+                    ((TextView) findViewById(R.id.frequencyText)).setText("Frequency: " + frequency);
+                    ((TextView) findViewById(R.id.bssidText)).setText("BSSID: " + displayBssid);
+                    ((TextView) findViewById(R.id.wifiStandardText)).setText("Wi-Fi Standard: " + standard);
                 });
+
+                updateConnectionTitle(true, false);
 
             } catch (SecurityException e) {
-                Log.e("Security", "Missing permissions", e);
-                runOnUiThread(() -> {
-                    TextView wifiDetailsTitle = findViewById(R.id.wifiDetailsTitle);
-                    wifiDetailsTitle.setText("(Enable location permissions for full details)");
-                });
+                Log.e("WifiDetails", "Permission denied", e);
+                updateUi(() -> ((TextView) findViewById(R.id.wifiDetailsTitle))
+                        .setText("(Enable location permission for full details)"));
             } catch (Exception e) {
-                Log.e("NetworkError", "Update failed", e);
-                runOnUiThread(() -> {
-                    TextView internetStatusText = findViewById(R.id.internetStatusText);
-                    internetStatusText.setText("Error loading network info");
-                });
+                Log.e("WifiDetails", "Update failed", e);
             }
         });
     }
+
+    /** Returns non-redacted WifiInfo. API 31+ reads from last callback capture; API 30 uses WifiManager. */
+    private WifiInfo getWifiInfo() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            return lastKnownWifiInfo;
+        }
+        WifiManager wm = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        return (wm != null) ? wm.getConnectionInfo() : null;
+    }
+
+    private void updateConnectionTitle(boolean isWifi, boolean isMobile) {
+        updateUi(() -> {
+            TextView title = findViewById(R.id.wifiDetailsTitle);
+            if (isWifi)        title.setText("Wi-Fi Details");
+            else if (isMobile) title.setText("Connected to Mobile Data");
+            else               title.setText("");
+        });
+    }
+
+    private void clearWifiDetails() {
+        updateUi(() -> {
+            ((TextView) findViewById(R.id.ssidText)).setText("SSID: N/A");
+            ((TextView) findViewById(R.id.ipText)).setText("IP: N/A");
+            ((TextView) findViewById(R.id.rssiText)).setText("RSSI: N/A");
+            ((TextView) findViewById(R.id.linkSpeedText)).setText("Link Speed: N/A");
+            ((TextView) findViewById(R.id.frequencyText)).setText("Frequency: N/A");
+            ((TextView) findViewById(R.id.bssidText)).setText("BSSID: N/A");
+            ((TextView) findViewById(R.id.wifiStandardText)).setText("Wi-Fi Standard: N/A");
+        });
+    }
+
+    // -------------------------------------------------------------------------
+    // Slow path: internet connectivity + ping/jitter (real network I/O)
+    // Only called by the 5-second timer — never blocks WiFi detail updates
+    // -------------------------------------------------------------------------
+
+    private void updateInternetStatus() {
+        internetExecutor.execute(() -> {
+            try {
+                boolean hasInternet = isConnectedToInternet();
+
+                updateUi(() -> ((TextView) findViewById(R.id.internetStatusText))
+                        .setText(hasInternet
+                                ? "Internet: Connected ✅"
+                                : "Internet: Not Connected ❌ (No Active Data)"));
+
+                if (hasInternet) {
+                    String latency = getNetworkLatency("8.8.8.8");
+                    String jitter  = getJitter("8.8.8.8");
+                    updateUi(() -> {
+                        ((TextView) findViewById(R.id.pingText)).setText("Ping: " + latency + " ms");
+                        ((TextView) findViewById(R.id.jitterText)).setText("Jitter: " + jitter + " ms");
+                    });
+                }
+            } catch (Exception e) {
+                Log.e("InternetStatus", "Update failed", e);
+                updateUi(() -> ((TextView) findViewById(R.id.internetStatusText))
+                        .setText("Error loading network info"));
+            }
+        });
+    }
+
+    // -------------------------------------------------------------------------
+    // Helpers
+    // -------------------------------------------------------------------------
 
     private boolean isConnectedToInternet() {
         try {
             ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
             if (cm == null) return false;
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                NetworkCapabilities capabilities = cm.getNetworkCapabilities(cm.getActiveNetwork());
-                if (capabilities != null &&
-                        (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
-                                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) &&
-                        capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)) {
-                    // Perform an active internet test
-                    return isInternetAccessible();
-                }
-            } else {
-                NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-                if (activeNetwork != null && activeNetwork.isConnected()) {
-                    // Perform an active internet test
-                    return isInternetAccessible();
-                }
+            NetworkCapabilities caps = cm.getNetworkCapabilities(cm.getActiveNetwork());
+            if (caps == null
+                    || !caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)) {
+                return false;
             }
-            return false;
+            // InetAddress.isReachable() uses ICMP/TCP-7 which is blocked on non-rooted Android.
+            // Use TCP connect to port 53 (DNS) — same approach as ping measurement.
+            try (Socket socket = new Socket()) {
+                socket.connect(new InetSocketAddress("8.8.8.8", 53), 1500);
+                return true;
+            }
         } catch (Exception e) {
             return false;
         }
@@ -284,54 +350,55 @@ public class WifiSettingsActivity extends AppCompatActivity {
 
     private String getIpAddress() {
         try {
-            List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
-            for (NetworkInterface intf : interfaces) {
-                List<InetAddress> addrs = Collections.list(intf.getInetAddresses());
-                for (InetAddress addr : addrs) {
+            // getNetworkInterfaces() can return null on some devices (e.g. airplane mode)
+            Enumeration<NetworkInterface> ifaces = NetworkInterface.getNetworkInterfaces();
+            if (ifaces == null) return "N/A";
+            for (NetworkInterface intf : Collections.list(ifaces)) {
+                for (InetAddress addr : Collections.list(intf.getInetAddresses())) {
                     if (!addr.isLoopbackAddress() && addr instanceof Inet4Address) {
-                        return addr.getHostAddress();
+                        // getHostAddress() can return null on rare JVM implementations
+                        String hostAddr = addr.getHostAddress();
+                        if (hostAddr != null) return hostAddr;
                     }
                 }
             }
-        } catch (SocketException e) {
-            Log.e("IP Error", "Error getting IP", e);
+        } catch (Exception e) {
+            Log.e("WifiDetails", "Error getting IP", e);
         }
         return "N/A";
     }
 
     private String getFrequencyBand(int frequency) {
-        if (frequency >= 2400 && frequency <= 2500) return "2.4 GHz";
-        if (frequency >= 4900 && frequency <= 5900) return "5 GHz";
-        if (frequency >= 5925 && frequency <= 7125) return "6 GHz";
-        return String.valueOf(frequency) + " MHz";
+        if (frequency <= 0)                          return "Unknown";
+        if (frequency >= 2400 && frequency <= 2500)  return "2.4 GHz";
+        if (frequency >= 4900 && frequency <= 5900)  return "5 GHz";
+        if (frequency >= 5925 && frequency <= 7125)  return "6 GHz";
+        return frequency + " MHz";
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.R)
     private String getWifiStandard(int standard) {
         switch (standard) {
-            case 6:
-                return "Wi-Fi 6 (802.11ax)";
-            case 5:
-                return "Wi-Fi 5 (802.11ac)";
-            case 4:
-                return "Wi-Fi 4 (802.11n)";
-            case 3:
-                return "Wi-Fi 3 (802.11g)";
-            case 2:
-                return "Wi-Fi 2 (802.11b)";
-            case 1:
-                return "Wi-Fi 1 (802.11a)";
-            default:
-                return "Unknown";
+            case 6:  return "Wi-Fi 6 (802.11ax)";
+            case 5:  return "Wi-Fi 5 (802.11ac)";
+            case 4:  return "Wi-Fi 4 (802.11n)";
+            case 3:  return "Wi-Fi 3 (802.11g)";
+            case 2:  return "Wi-Fi 2 (802.11b)";
+            case 1:  return "Wi-Fi 1 (802.11a)";
+            default: return "Unknown";
         }
+    }
+
+    private long measureTcpLatency(String host) throws Exception {
+        long start = System.currentTimeMillis();
+        try (Socket socket = new Socket()) {
+            socket.connect(new InetSocketAddress(host, 53), 1000);
+        }
+        return System.currentTimeMillis() - start;
     }
 
     private String getNetworkLatency(String host) {
         try {
-            long startTime = System.currentTimeMillis();
-            InetAddress.getByName(host).isReachable(1000);
-            long endTime = System.currentTimeMillis();
-            return String.valueOf(endTime - startTime);
+            return String.valueOf(measureTcpLatency(host));
         } catch (Exception e) {
             return "N/A";
         }
@@ -340,35 +407,15 @@ public class WifiSettingsActivity extends AppCompatActivity {
     private String getJitter(String host) {
         try {
             long[] times = new long[5];
-            for (int i = 0; i < 5; i++) {
-                long startTime = System.currentTimeMillis();
-                InetAddress.getByName(host).isReachable(500);
-                long endTime = System.currentTimeMillis();
-                times[i] = endTime - startTime;
-            }
+            for (int i = 0; i < 5; i++) times[i] = measureTcpLatency(host);
             long max = Long.MIN_VALUE, min = Long.MAX_VALUE;
-            for (long time : times) {
-                if (time > max) max = time;
-                if (time < min) min = time;
+            for (long t : times) {
+                if (t > max) max = t;
+                if (t < min) min = t;
             }
             return String.valueOf(max - min);
         } catch (Exception e) {
             return "N/A";
         }
     }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        // Unregister network callback to prevent memory leaks
-        if (connectivityManager != null && networkCallback != null) {
-            connectivityManager.unregisterNetworkCallback(networkCallback);
-        }
-
-        // Proper cleanup
-        mainHandler.removeCallbacks(updateRunnable);
-        executorService.shutdownNow();
-    }
-
 }

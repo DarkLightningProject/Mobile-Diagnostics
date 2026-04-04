@@ -10,8 +10,12 @@ import com.example.mid.helpers.CallLogEntry;
 import com.example.mid.helpers.CallLogHelper;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class CallLogActivity extends AppCompatActivity {
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,8 +23,18 @@ public class CallLogActivity extends AppCompatActivity {
 
         ListView listView = findViewById(R.id.callLogListView);
 
-        List<CallLogEntry> logs = CallLogHelper.getCallLogs(this);
-        CallLogAdapter adapter = new CallLogAdapter(this, logs);
-        listView.setAdapter(adapter);
+        executorService.execute(() -> {
+            List<CallLogEntry> logs = CallLogHelper.getCallLogs(this);
+            runOnUiThread(() -> {
+                CallLogAdapter adapter = new CallLogAdapter(this, logs);
+                listView.setAdapter(adapter);
+            });
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        executorService.shutdown();
     }
 }

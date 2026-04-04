@@ -4,6 +4,7 @@ import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -24,7 +25,7 @@ public class SocInfoActivity extends AppCompatActivity {
 
     // Threading and Monitoring
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
-    private final Handler handler = new Handler();
+    private final Handler handler = new Handler(Looper.getMainLooper());
     private boolean isMonitoring = true;
 
     // OpenGL Context
@@ -87,18 +88,21 @@ public class SocInfoActivity extends AppCompatActivity {
         glSurfaceView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
     }
 
-    // Update GPU Information
+    // Update GPU Information — file I/O runs on executor, UI update on main thread
     private void updateGpuInfo() {
-        float load = GpuInfoHelper.getGpuLoad();
-        String formattedGpuInfo = "🎮 GPU Vendor: " + (gpuVendor != null ? gpuVendor : "Unknown") + "\n" +
-                "🖥 Renderer: " + (gpuRenderer != null ? gpuRenderer : "Unknown") + "\n" +
-                "📊 Load: " + (load != -1 ? String.format("%.1f%%", load) : "N/A");
-
-        runOnUiThread(() -> {
-            if (gpuInfoText != null) {
-                gpuInfoText.setText(formattedGpuInfo);
-                gpuInfoText.setVisibility(TextView.VISIBLE); // Ensure visibility
-            }
+        executor.execute(() -> {
+            float load = GpuInfoHelper.getGpuLoad();
+            String vendorCopy = gpuVendor;
+            String rendererCopy = gpuRenderer;
+            String formattedGpuInfo = "🎮 GPU Vendor: " + (vendorCopy != null ? vendorCopy : "Unknown") + "\n" +
+                    "🖥 Renderer: " + (rendererCopy != null ? rendererCopy : "Unknown") + "\n" +
+                    "📊 Load: " + (load != -1 ? String.format("%.1f%%", load) : "N/A");
+            runOnUiThread(() -> {
+                if (gpuInfoText != null) {
+                    gpuInfoText.setText(formattedGpuInfo);
+                    gpuInfoText.setVisibility(TextView.VISIBLE);
+                }
+            });
         });
     }
 

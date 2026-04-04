@@ -12,10 +12,14 @@ public class BatteryHelper {
         IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
         Intent batteryStatus = context.registerReceiver(null, ifilter);
 
+        if (batteryStatus == null) {
+            return "Status: N/A\nHealth: N/A\nSource: N/A\nTech: N/A\nTemp: N/A\nVoltage: N/A\nLevel: N/A";
+        }
+
         // Percentage
         int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
         int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-        float batteryPct = level * 100 / (float) scale;
+        float batteryPct = (scale > 0) ? level * 100 / (float) scale : 0f;
 
         // Health
         String health = getBatteryHealth(batteryStatus);
@@ -26,8 +30,9 @@ public class BatteryHelper {
         // Status (Charging/Discharging)
         String status = getChargingStatus(batteryStatus);
 
-        // Technology (Li-ion, etc.)
+        // Technology (Li-ion, etc.) — can be null on some devices
         String technology = batteryStatus.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY);
+        if (technology == null) technology = "Unknown";
 
         // Temperature
         float temp = batteryStatus.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0) / 10f;

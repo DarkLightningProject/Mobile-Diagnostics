@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.net.Uri;
+import android.util.Log;
 import androidx.core.content.ContextCompat;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,9 +48,9 @@ public class CallLogHelper {
                 } while (cursor.moveToNext() && callLogs.size() < MAX_CALL_LOG_ENTRIES);
             }
         } catch (SecurityException e) {
-            e.printStackTrace();
+            Log.e("CallLogHelper", "Permission denied reading call logs", e);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("CallLogHelper", "Error reading call logs", e);
         }
 
         return callLogs;
@@ -72,21 +73,7 @@ public class CallLogHelper {
         );
     }
 
-    // ✅ Step 5: Format Call Log Entry Properly
-    private static String formatCallLogEntry(Cursor cursor, Context context) {
-        String number = cursor.getString(0);
-        String contactName = getContactName(context, number); // Fetch contact name
-        int duration = cursor.getInt(1);
-        int type = cursor.getInt(2);
-        long date = cursor.getLong(3);
-
-        return String.format(
-                "📞 Name: %s\n📲 Number: %s\n⏳ Duration: %ds\n📌 Type: %s\n🗓️ Date: %s",
-                contactName, number, duration, getCallTypeString(type), formatTimestamp(date)
-        );
-    }
-
-    // ✅ Step 6: Get Contact Name from Contacts List
+    // ✅ Step 5: Get Contact Name from Contacts List
     private static String getContactName(Context context, String phoneNumber) {
         Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
         Cursor cursor = context.getContentResolver().query(

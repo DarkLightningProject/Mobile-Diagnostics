@@ -3,21 +3,14 @@ package com.example.mid;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
-//import com.example.mid.adapters.CustomAdapter;
 import com.example.mid.database.DeviceDatabase;
 import com.example.mid.database.DeviceInfo;
-import com.example.mid.helpers.CallLogEntry;
-import com.example.mid.helpers.CallLogHelper;
 import com.example.mid.helpers.DeviceInfoHelper;
-import com.example.mid.helpers.DisplayHelper;
 
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -36,9 +29,12 @@ public class MainActivity extends AppCompatActivity {
         // Fetch and display display info
 
 
-        // Fetch device info and insert into database
-        DeviceInfo deviceInfo = DeviceInfoHelper.getDeviceDetails(this);
-        executorService.execute(() -> database.deviceInfoDao().insert(deviceInfo));
+        // Refresh device info: clear old rows and insert fresh data
+        executorService.execute(() -> {
+            DeviceInfo deviceInfo = DeviceInfoHelper.getDeviceDetails(this);
+            database.deviceInfoDao().deleteAll();
+            database.deviceInfoDao().insert(deviceInfo);
+        });
 
         // Set click listeners for cards
         CardView aboutPhoneCard = findViewById(R.id.aboutPhonecard);
@@ -74,13 +70,6 @@ public class MainActivity extends AppCompatActivity {
 
         CardView socCard = findViewById(R.id.socCard);
         socCard.setOnClickListener(this::openSocInfo);
-    }
-    private void loadCallLogs() {
-        ListView listView = findViewById(R.id.callLogListView);
-        List<CallLogEntry> logs = CallLogHelper.getCallLogs(this);
-
-        CustomAdapter adapter = new CustomAdapter(this, logs);
-        listView.setAdapter(adapter);
     }
     public void openSocInfo(View view) {
         startActivity(new Intent(this, SocInfoActivity.class));

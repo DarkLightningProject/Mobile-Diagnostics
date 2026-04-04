@@ -63,6 +63,7 @@ public class AboutPhoneActivity extends AppCompatActivity {
         executorService.execute(() -> {
             DeviceInfo latestDeviceInfo = DeviceDatabase.getInstance(this)
                     .deviceInfoDao().getLatestDeviceInfo();
+            boolean rooted = isRooted(); // computed on background thread, safe
             runOnUiThread(() -> {
                 if (latestDeviceInfo != null) {
                     // Set database fields
@@ -80,7 +81,7 @@ public class AboutPhoneActivity extends AppCompatActivity {
                     // Set dynamic fields
                     apiLevelText.setText("API Level: " + Build.VERSION.SDK_INT);
                     openGlText.setText("OpenGL ES: " + getOpenGlVersion());
-                    rootAccessText.setText("Root Access: " + (isRooted() ? "Yes" : "No"));
+                    rootAccessText.setText("Root Access: " + (rooted ? "Yes" : "No"));
                     googlePlayServicesText.setText("Google Play Services: " + getPlayServicesVersion());
                     uptimeText.setText("Uptime: " + getSystemUptime());
                 } else {

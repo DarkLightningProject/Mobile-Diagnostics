@@ -31,33 +31,34 @@ public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+        // Unregister previous listener before binding a new sensor to this view
+        if (holder.currentListener != null) {
+            sensorManager.unregisterListener(holder.currentListener);
+            holder.currentListener = null;
+        }
+
         final Sensor sensor = this.sensorList.get(position);
         holder.sensorName.setText(sensor.getName());
         holder.sensorType.setText("Type: " + getTypeName(sensor.getType()));
         holder.sensorVendor.setText("Vendor: " + sensor.getVendor());
-        holder.sensorData.setText("Data: Waiting..."); // Initial state
+        holder.sensorData.setText("Data: Waiting...");
 
-        // Create a SensorEventListener
         SensorEventListener listener = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent event) {
                 String data = formatSensorData(event.values, getUnitForSensor(sensor.getType()));
                 holder.sensorData.setText("Data: " + data);
-                Log.d("SensorData", "Sensor: " + sensor.getName() + ", Data: " + data); // Log sensor data
             }
 
             @Override
-            public void onAccuracyChanged(Sensor sensor, int accuracy) {
-                // Handle accuracy changes if needed
-            }
+            public void onAccuracyChanged(Sensor sensor, int accuracy) {}
         };
 
-        // Register the listener for the sensor
         holder.setListener(listener);
         boolean isRegistered = sensorManager.registerListener(listener, sensor, SensorManager.SENSOR_DELAY_NORMAL);
         if (!isRegistered) {
             holder.sensorData.setText("Data: Unavailable");
-            Log.e("SensorAdapter", "Failed to register listener for sensor: " + sensor.getName());
+            Log.e("SensorAdapter", "Failed to register: " + sensor.getName());
         }
     }
 

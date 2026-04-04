@@ -7,6 +7,7 @@ import android.os.StatFs;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import com.example.mid.database.DeviceInfo;
+import android.util.Log;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -65,8 +66,11 @@ public class DeviceInfoHelper {
     public String getKernelVersion() {
         try {
             Process process = Runtime.getRuntime().exec("uname -a");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            return reader.readLine();
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String result = reader.readLine();
+                process.destroy();
+                return result != null ? result : "Unknown";
+            }
         } catch (IOException e) {
             return "Unknown";
         }
@@ -83,15 +87,19 @@ public class DeviceInfoHelper {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e("DeviceInfoHelper", "Failed to read meminfo", e);
         }
         return "Unknown";
     }
 
     public String getInternalStorage() {
-        StatFs statFs = new StatFs("/data");
-        long totalBytes = statFs.getTotalBytes();
-        return (totalBytes / (1024 * 1024 * 1024)) + " GB";
+        try {
+            StatFs statFs = new StatFs("/data");
+            long totalBytes = statFs.getTotalBytes();
+            return (totalBytes / (1024 * 1024 * 1024)) + " GB";
+        } catch (Exception e) {
+            return "Unknown";
+        }
     }
 
     public String getModelNumber() {
@@ -103,6 +111,7 @@ public class DeviceInfoHelper {
     }
 
     public String getKernelArch() {
-        return System.getProperty("os.arch"); // ✅ Get kernel architecture
+        String arch = System.getProperty("os.arch");
+        return arch != null ? arch : "Unknown";
     }
 }

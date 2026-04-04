@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <!-- Phone State (Remove READ_PRIVILEGED_PHONE_STATE if not a system app) -->
+    <!-- Phone State -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
 
@@ -23,8 +23,7 @@
     <!-- Sensors and Motion -->
     <uses-permission android:name="android.permission.BODY_SENSORS"/>
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
-    <uses-permission android:name="android.permission.ACCESS_MOTION_SENSORS" />
-    <uses-feature android:name="android.hardware.sensor.stepcounter"/>
+<uses-feature android:name="android.hardware.sensor.stepcounter"/>
 
     <!-- Call Log Permission -->
     <uses-permission android:name="android.permission.READ_CALL_LOG" />

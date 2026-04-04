@@ -11,6 +11,9 @@ public interface DeviceInfoDao {
     @Insert
     void insert(DeviceInfo deviceInfo);
 
+    @Query("DELETE FROM DeviceInfo")
+    void deleteAll();
+
     @Query("SELECT * FROM DeviceInfo ORDER BY id DESC LIMIT 1")
     DeviceInfo getLatestDeviceInfo();
 
