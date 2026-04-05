@@ -1,5 +1,6 @@
 package com.example.mid;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
@@ -7,6 +8,7 @@ import com.example.mid.helpers.StorageHelper;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+@SuppressLint("SetTextI18n")
 public class StorageTestActivity extends AppCompatActivity {
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 

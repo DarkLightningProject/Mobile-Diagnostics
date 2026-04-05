@@ -4,7 +4,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
@@ -28,7 +27,6 @@ import java.util.concurrent.Executors;
 public class SimSettingsActivity extends AppCompatActivity {
     private TextView simSlotText, carrierText, countryText, simCodeText, volteText;
     private Spinner simSlotSpinner;
-    private Button refreshButton;
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     private static final int PERMISSION_REQUEST_CODE = 1;
     private List<SubscriptionInfo> subscriptionInfoList;
@@ -44,9 +42,9 @@ public class SimSettingsActivity extends AppCompatActivity {
         simSlotText = findViewById(R.id.simSlotText);
         carrierText = findViewById(R.id.carrierText);
         countryText = findViewById(R.id.countryText);
-        simCodeText = findViewById(R.id.simCodeText); // Changed from networkOperatorText
+        simCodeText = findViewById(R.id.simCodeText);
         volteText = findViewById(R.id.volteText);
-        refreshButton = findViewById(R.id.refreshButton);
+        Button refreshButton = findViewById(R.id.refreshButton);
         simSlotSpinner = findViewById(R.id.simSlotSpinner);
 
         subscriptionManager = (SubscriptionManager) getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
@@ -98,7 +96,7 @@ public class SimSettingsActivity extends AppCompatActivity {
         List<String> simOptions = new ArrayList<>();
         for (SubscriptionInfo info : subscriptionInfoList) {
             int simSlotIndex = info.getSimSlotIndex();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && info.isEmbedded()) {
+            if (info.isEmbedded()) {
                 simOptions.add("eSIM");
             } else {
                 simOptions.add("SIM " + (simSlotIndex + 1));
@@ -134,8 +132,8 @@ public class SimSettingsActivity extends AppCompatActivity {
         String countryIso = info.getCountryIso();
 
         // MCC and MNC
-        int mcc = info.getMcc();
-        int mnc = info.getMnc();
+        String mcc = info.getMccString() != null ? info.getMccString() : "N/A";
+        String mnc = info.getMncString() != null ? info.getMncString() : "N/A";
 
         // Get Network Operator code (MCC + MNC)
         String networkOperator = specificTelephonyManager.getNetworkOperator();

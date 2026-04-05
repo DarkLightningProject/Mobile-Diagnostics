@@ -2,184 +2,175 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
-
-    <!-- Internet Connection Status -->
-    <TextView
-        android:id="@+id/internetStatusText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Internet: Loading..."
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:padding="8dp"
-        android:layout_marginBottom="16dp"/>
-
-    <!-- Ping and Jitter -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="16dp">
+        android:orientation="vertical"
+        android:padding="16dp">
 
+        <!-- Internet Connection Status -->
         <TextView
-            android:id="@+id/pingText"
-            android:layout_width="0dp"
+            android:id="@+id/internetStatusText"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Ping: N/A"
+            android:text="@string/internet_loading"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:padding="8dp"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Ping and Jitter -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:id="@+id/pingText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/ping_na"
+                android:textSize="16sp"
+                android:padding="8dp"/>
+
+            <TextView
+                android:id="@+id/jitterText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/jitter_na"
+                android:textSize="16sp"
+                android:padding="8dp"/>
+        </LinearLayout>
+
+        <!-- Horizontal Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/divider_color"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Wi-Fi Details -->
+        <TextView
+            android:id="@+id/wifiDetailsTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_wifi_details"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:padding="8dp"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- SSID -->
+        <TextView
+            android:id="@+id/ssidText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ssid_na"
             android:textSize="16sp"
             android:padding="8dp"/>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/divider_color"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- BSSID -->
         <TextView
-            android:id="@+id/jitterText"
-            android:layout_width="0dp"
+            android:id="@+id/bssidText"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Jitter: N/A"
+            android:text="@string/bssid_na"
             android:textSize="16sp"
             android:padding="8dp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/divider_color"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- IP -->
+        <TextView
+            android:id="@+id/ipText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ip_na"
+            android:textSize="16sp"
+            android:padding="8dp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/divider_color"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- RSSI -->
+        <TextView
+            android:id="@+id/rssiText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/rssi_na"
+            android:textSize="16sp"
+            android:padding="8dp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/divider_color"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- Link Speed -->
+        <TextView
+            android:id="@+id/linkSpeedText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/link_speed_na"
+            android:textSize="16sp"
+            android:padding="8dp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/divider_color"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- Frequency -->
+        <TextView
+            android:id="@+id/frequencyText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/frequency_na"
+            android:textSize="16sp"
+            android:padding="8dp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/divider_color"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- Wi-Fi Standard -->
+        <TextView
+            android:id="@+id/wifiStandardText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/wifi_standard_na"
+            android:textSize="16sp"
+            android:padding="8dp"/>
+
+        <ImageView
+            android:id="@+id/phoneHardwareImage"
+            android:layout_width="400dp"
+            android:layout_height="400dp"
+            android:layout_marginTop="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/network"
+            android:contentDescription="@string/network_img_desc"/>
+
     </LinearLayout>
 
-    <!-- Horizontal Divider -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/divider_color"
-        android:layout_marginBottom="16dp"/>
-
-    <!-- Wi-Fi Details -->
-    <TextView
-        android:id="@+id/wifiDetailsTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Wi-Fi Details:"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:padding="8dp"
-        android:layout_marginBottom="8dp"/>
-
-    <!-- SSID -->
-    <TextView
-        android:id="@+id/ssidText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="SSID: N/A"
-        android:textSize="16sp"
-        android:padding="8dp"/>
-
-    <!-- Horizontal Divider -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/divider_color"
-        android:layout_marginBottom="8dp"/>
-
-    <!-- BSSID -->
-    <TextView
-        android:id="@+id/bssidText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="BSSID: N/A"
-        android:textSize="16sp"
-        android:padding="8dp"/>
-
-    <!-- Horizontal Divider -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/divider_color"
-        android:layout_marginBottom="8dp"/>
-
-    <!-- IP -->
-    <TextView
-        android:id="@+id/ipText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="IP: N/A"
-        android:textSize="16sp"
-        android:padding="8dp"/>
-
-    <!-- Horizontal Divider -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/divider_color"
-        android:layout_marginBottom="8dp"/>
-
-    <!-- RSSI -->
-    <TextView
-        android:id="@+id/rssiText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="RSSI: N/A"
-        android:textSize="16sp"
-        android:padding="8dp"/>
-
-    <!-- Horizontal Divider -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/divider_color"
-        android:layout_marginBottom="8dp"/>
-
-    <!-- Link Speed -->
-    <TextView
-        android:id="@+id/linkSpeedText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Link Speed: N/A"
-        android:textSize="16sp"
-        android:padding="8dp"/>
-
-    <!-- Horizontal Divider -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/divider_color"
-        android:layout_marginBottom="8dp"/>
-
-    <!-- Frequency -->
-    <TextView
-        android:id="@+id/frequencyText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Frequency: N/A"
-        android:textSize="16sp"
-        android:padding="8dp"/>
-
-    <!-- Horizontal Divider -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/divider_color"
-        android:layout_marginBottom="8dp"/>
-
-    <!-- Wi-Fi Standard -->
-    <TextView
-        android:id="@+id/wifiStandardText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Wi-Fi Standard: N/A"
-        android:textSize="16sp"
-        android:padding="8dp"/>
-
-
-    <ImageView
-        android:id="@+id/phoneHardwareImage"
-        android:layout_width="400dp"
-        android:layout_height="400dp"
-        android:layout_marginTop="10dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/network" />
-
-</LinearLayout>
-    </ScrollView>
-
-
-
-
+</ScrollView>

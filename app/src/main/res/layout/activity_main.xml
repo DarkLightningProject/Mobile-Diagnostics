@@ -5,32 +5,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Single root container -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:context=".MainActivity">
 
-        <!-- Top View -->
         <View
             android:id="@+id/main"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:background="@drawable/bg_view" />
 
-        <!-- Dashboard Title -->
         <TextView
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="38dp"
-            android:text="Dashboard"
+            android:text="@string/dashboard"
             android:textColor="@color/text_color"
             android:textSize="40sp"
             android:textStyle="bold" />
 
-        <!-- GridLayout Below Top View -->
         <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -49,7 +45,8 @@
                 android:layout_height="180dp"
                 android:layout_columnWeight="1"
                 app:cardCornerRadius="15dp"
-                app:cardElevation="12dp">
+                app:cardElevation="12dp"
+                tools:ignore="UseCompoundDrawables">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -63,14 +60,15 @@
                         android:layout_gravity="center_horizontal"
                         android:padding="12dp"
                         android:scaleType="fitCenter"
-                        android:src="@drawable/ic_about_phone" />
+                        android:src="@drawable/ic_about_phone"
+                        android:contentDescription="@string/ic_about_phone_desc"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:paddingTop="8dp"
-                        android:text="About Phone"
+                        android:text="@string/nav_about_phone"
                         android:textColor="@color/text_color"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -84,7 +82,8 @@
                 android:layout_height="180dp"
                 android:layout_columnWeight="1"
                 app:cardCornerRadius="15dp"
-                app:cardElevation="12dp">
+                app:cardElevation="12dp"
+                tools:ignore="UseCompoundDrawables">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -98,14 +97,15 @@
                         android:layout_gravity="center_horizontal"
                         android:padding="12dp"
                         android:scaleType="fitCenter"
-                        android:src="@drawable/ic_sensors" />
+                        android:src="@drawable/ic_sensors"
+                        android:contentDescription="@string/ic_sensor_test_desc"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:paddingTop="8dp"
-                        android:text="Sensor Test"
+                        android:text="@string/nav_sensor_test"
                         android:textColor="@color/text_color"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -119,7 +119,8 @@
                 android:layout_height="180dp"
                 android:layout_columnWeight="1"
                 app:cardCornerRadius="15dp"
-                app:cardElevation="12dp">
+                app:cardElevation="12dp"
+                tools:ignore="UseCompoundDrawables">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -133,14 +134,15 @@
                         android:layout_gravity="center_horizontal"
                         android:padding="12dp"
                         android:scaleType="fitCenter"
-                        android:src="@drawable/ic_sim_card_24" />
+                        android:src="@drawable/ic_sim_card_24"
+                        android:contentDescription="@string/ic_sim_settings_desc"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:paddingTop="8dp"
-                        android:text="SIM Settings"
+                        android:text="@string/nav_sim_settings"
                         android:textColor="@color/text_color"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -154,7 +156,8 @@
                 android:layout_height="180dp"
                 android:layout_columnWeight="1"
                 app:cardCornerRadius="15dp"
-                app:cardElevation="12dp">
+                app:cardElevation="12dp"
+                tools:ignore="UseCompoundDrawables">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -168,14 +171,15 @@
                         android:layout_gravity="center_horizontal"
                         android:padding="12dp"
                         android:scaleType="fitCenter"
-                        android:src="@drawable/ic_display_settings" />
+                        android:src="@drawable/ic_display_settings"
+                        android:contentDescription="@string/ic_display_desc"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:paddingTop="8dp"
-                        android:text="Display"
+                        android:text="@string/nav_display"
                         android:textColor="@color/text_color"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -191,7 +195,8 @@
                 android:clickable="true"
                 android:focusable="true"
                 app:cardCornerRadius="15dp"
-                app:cardElevation="12dp">
+                app:cardElevation="12dp"
+                tools:ignore="UseCompoundDrawables">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -205,14 +210,15 @@
                         android:layout_gravity="center_horizontal"
                         android:padding="12dp"
                         android:scaleType="fitCenter"
-                        android:src="@drawable/ic_network_wifi" />
+                        android:src="@drawable/ic_network_wifi"
+                        android:contentDescription="@string/ic_network_desc"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:paddingTop="8dp"
-                        android:text="Network"
+                        android:text="@string/nav_network"
                         android:textColor="@color/text_color"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -226,7 +232,8 @@
                 android:layout_height="180dp"
                 android:layout_columnWeight="1"
                 app:cardCornerRadius="15dp"
-                app:cardElevation="12dp">
+                app:cardElevation="12dp"
+                tools:ignore="UseCompoundDrawables">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -238,7 +245,8 @@
                     <ImageView
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:src="@drawable/ic_battery_alert" />
+                        android:src="@drawable/ic_battery_alert"
+                        android:contentDescription="@string/ic_battery_desc"/>
 
                     <TextView
                         android:id="@+id/batteryDetailsText"
@@ -246,7 +254,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:gravity="center"
-                        android:text="Battery"
+                        android:text="@string/nav_battery"
                         android:textColor="@color/text_color"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -261,7 +269,8 @@
                 android:layout_columnWeight="1"
                 android:layout_margin="8dp"
                 app:cardCornerRadius="15dp"
-                app:cardElevation="12dp">
+                app:cardElevation="12dp"
+                tools:ignore="UseCompoundDrawables">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -299,7 +308,8 @@
                 android:layout_columnWeight="1"
                 android:layout_margin="8dp"
                 app:cardCornerRadius="15dp"
-                app:cardElevation="12dp">
+                app:cardElevation="12dp"
+                tools:ignore="UseCompoundDrawables">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -328,6 +338,7 @@
                         android:paddingTop="8dp"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
+
             <!-- SOC Card -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/socCard"
@@ -336,7 +347,8 @@
                 android:layout_columnWeight="1"
                 android:onClick="openSocInfo"
                 app:cardCornerRadius="15dp"
-                app:cardElevation="12dp">
+                app:cardElevation="12dp"
+                tools:ignore="UseCompoundDrawables">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -350,24 +362,23 @@
                         android:layout_gravity="center_horizontal"
                         android:padding="12dp"
                         android:scaleType="fitCenter"
-                        android:src="@drawable/ic_cpu" />
+                        android:src="@drawable/ic_cpu"
+                        android:contentDescription="@string/ic_soc_desc"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:paddingTop="8dp"
-                        android:text="SOC Info"
+                        android:text="@string/nav_soc_info"
                         android:textColor="@color/text_color"
                         android:textSize="18sp"
                         android:textStyle="bold" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
+
         </GridLayout>
 
-
-
-        <!-- Device Info Text -->
         <TextView
             android:id="@+id/deviceInfoText"
             android:layout_width="match_parent"
@@ -375,10 +386,11 @@
             android:layout_below="@id/main"
             android:layout_marginTop="16dp"
             android:padding="16dp"
-            android:text="Fetching Device Info..."
+            android:text="@string/fetching_device_info"
             android:textColor="@color/text_color"
             android:textSize="18sp"
             android:textStyle="bold"
             android:visibility="gone" />
+
     </RelativeLayout>
 </ScrollView>

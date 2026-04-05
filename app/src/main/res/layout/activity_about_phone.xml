@@ -28,7 +28,7 @@
                     android:id="@+id/aboutPhoneText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Device Information"
+                    android:text="@string/device_information"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:paddingBottom="8dp" />
@@ -43,7 +43,7 @@
                     android:id="@+id/deviceNameText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Device: "
+                    android:text="@string/label_device"
                     android:textSize="16sp"
                     android:paddingBottom="8dp" />
 
@@ -51,7 +51,7 @@
                     android:id="@+id/manufacturerText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Manufacturer: "
+                    android:text="@string/label_manufacturer"
                     android:textSize="16sp"
                     android:paddingBottom="8dp" />
 
@@ -59,7 +59,7 @@
                     android:id="@+id/androidVersionText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Android Version: "
+                    android:text="@string/label_android_version"
                     android:textSize="16sp"
                     android:paddingBottom="8dp" />
 
@@ -67,7 +67,7 @@
                     android:id="@+id/kernelVersionText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Kernel Version: "
+                    android:text="@string/label_kernel_version"
                     android:textSize="16sp"
                     android:paddingBottom="8dp" />
 
@@ -75,7 +75,7 @@
                     android:id="@+id/imeiText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="IMEI: "
+                    android:text="@string/label_imei"
                     android:textSize="16sp"
                     android:paddingBottom="8dp" />
 
@@ -83,7 +83,7 @@
                     android:id="@+id/ramText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Total RAM: "
+                    android:text="@string/label_total_ram"
                     android:textSize="16sp"
                     android:paddingBottom="8dp" />
 
@@ -91,7 +91,7 @@
                     android:id="@+id/storageText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Internal Storage: "
+                    android:text="@string/label_internal_storage"
                     android:textSize="16sp"
                     android:paddingBottom="8dp" />
 
@@ -99,7 +99,7 @@
                     android:id="@+id/modelNumberText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Model Number: "
+                    android:text="@string/label_model_number"
                     android:textSize="16sp"
                     android:paddingBottom="8dp" />
 
@@ -107,7 +107,7 @@
                     android:id="@+id/boardText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Board: "
+                    android:text="@string/label_board"
                     android:textSize="16sp"
                     android:paddingBottom="8dp" />
 
@@ -115,7 +115,7 @@
                     android:id="@+id/openGlText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="OpenGL ES: "
+                    android:text="@string/label_opengl_es"
                     android:textSize="16sp"
                     android:paddingBottom="8dp" />
 
@@ -123,7 +123,7 @@
                     android:id="@+id/apiLevelText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="API Level: "
+                    android:text="@string/label_api_level"
                     android:textSize="16sp"
                     android:paddingBottom="8dp" />
 
@@ -131,7 +131,7 @@
                     android:id="@+id/kernelArchText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Kernel Architecture: "
+                    android:text="@string/label_kernel_arch"
                     android:textSize="16sp"
                     android:paddingBottom="8dp" />
 
@@ -139,7 +139,7 @@
                     android:id="@+id/rootAccessText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Root Access: "
+                    android:text="@string/label_root_access"
                     android:textSize="16sp"
                     android:paddingBottom="8dp" />
 
@@ -147,7 +147,7 @@
                     android:id="@+id/googlePlayServicesText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Google Play Services: "
+                    android:text="@string/label_google_play"
                     android:textSize="16sp"
                     android:paddingBottom="8dp" />
 
@@ -155,7 +155,7 @@
                     android:id="@+id/uptimeText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="System Uptime: "
+                    android:text="@string/label_uptime"
                     android:textSize="16sp"
                     android:paddingBottom="8dp" />
 
@@ -168,7 +168,8 @@
             android:layout_height="400dp"
             android:layout_marginTop="10dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/phone_hardware_image" />
+            android:src="@drawable/phone_hardware_image"
+            android:contentDescription="@string/phone_hardware_desc"/>
 
     </LinearLayout>
 

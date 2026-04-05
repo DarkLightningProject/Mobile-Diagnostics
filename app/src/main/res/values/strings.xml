@@ -1,7 +1,96 @@
 <resources>
     <string name="app_name">MID</string>
+
+    <!-- Navigation / Dashboard -->
+    <string name="dashboard">Dashboard</string>
+    <string name="nav_about_phone">About Phone</string>
+    <string name="nav_sensor_test">Sensor Test</string>
+    <string name="nav_sim_settings">SIM Settings</string>
+    <string name="nav_display">Display</string>
+    <string name="nav_network">Network</string>
+    <string name="nav_battery">Battery</string>
+    <string name="nav_soc_info">SOC Info</string>
     <string name="call_logs">Call Logs</string>
     <string name="storage_test">Storage Test</string>
+    <string name="fetching_device_info">Fetching Device Info…</string>
+
+    <!-- About Phone labels -->
+    <string name="device_information">Device Information</string>
+    <string name="label_device">Device: </string>
+    <string name="label_manufacturer">Manufacturer: </string>
+    <string name="label_android_version">Android Version: </string>
+    <string name="label_kernel_version">Kernel Version: </string>
+    <string name="label_imei">IMEI: </string>
+    <string name="label_total_ram">Total RAM: </string>
+    <string name="label_internal_storage">Internal Storage: </string>
+    <string name="label_model_number">Model Number: </string>
+    <string name="label_board">Board: </string>
+    <string name="label_opengl_es">OpenGL ES: </string>
+    <string name="label_api_level">API Level: </string>
+    <string name="label_kernel_arch">Kernel Architecture: </string>
+    <string name="label_root_access">Root Access: </string>
+    <string name="label_google_play">Google Play Services: </string>
+    <string name="label_uptime">System Uptime: </string>
+
+    <!-- Battery labels -->
+    <string name="label_battery_status">Battery Status:</string>
+    <string name="label_health">Health:</string>
+    <string name="label_power_source">Power Source:</string>
+    <string name="label_voltage_temp">Voltage and Temperature:</string>
+    <string name="label_technology">Technology:</string>
+
+    <!-- Display test buttons -->
+    <string name="btn_test_display_colors">Test Display Colors</string>
+    <string name="btn_test_display_blocks">Test Display Blocks</string>
+    <string name="btn_next_color">Next Color</string>
+    <string name="btn_reset_all">Reset All</string>
+
+    <!-- SIM labels -->
+    <string name="label_select_sim_slot">Select SIM Slot:</string>
+    <string name="label_sim_slot">SIM Slot:</string>
+    <string name="label_carrier">Carrier:</string>
+    <string name="label_country">Country:</string>
+    <string name="label_network_operator">Network Operator:</string>
+    <string name="label_sim_state">SIM State:</string>
+    <string name="btn_refresh_sim">Refresh SIM Info</string>
+
+    <!-- SOC / CPU loading placeholders -->
+    <string name="loading_soc">Loading SOC information…</string>
+    <string name="loading_gpu">GPU info loading…</string>
+
+    <!-- Storage labels -->
+    <string name="internal_storage">Internal Storage</string>
+    <string name="external_storage">External Storage</string>
+
+    <!-- Wi-Fi placeholders -->
+    <string name="internet_loading">Internet: Loading…</string>
+    <string name="ping_na">Ping: N/A</string>
+    <string name="jitter_na">Jitter: N/A</string>
+    <string name="label_wifi_details">Wi-Fi Details:</string>
+    <string name="ssid_na">SSID: N/A</string>
+    <string name="bssid_na">BSSID: N/A</string>
+    <string name="ip_na">IP: N/A</string>
+    <string name="rssi_na">RSSI: N/A</string>
+    <string name="link_speed_na">Link Speed: N/A</string>
+    <string name="frequency_na">Frequency: N/A</string>
+    <string name="wifi_standard_na">Wi-Fi Standard: N/A</string>
+
+    <!-- Sensor item placeholders -->
+    <string name="sensor_name_placeholder">Sensor Name</string>
+    <string name="sensor_type_unknown">Type: Unknown</string>
+    <string name="sensor_vendor_unknown">Vendor: Unknown</string>
+    <string name="sensor_data_waiting">Data: Waiting for update…</string>
+
+    <!-- Content descriptions -->
     <string name="call_logs_desc">Call logs icon</string>
     <string name="storage_test_desc">Storage test icon</string>
+    <string name="ic_about_phone_desc">About Phone icon</string>
+    <string name="ic_sensor_test_desc">Sensor Test icon</string>
+    <string name="ic_sim_settings_desc">SIM Settings icon</string>
+    <string name="ic_display_desc">Display icon</string>
+    <string name="ic_network_desc">Network icon</string>
+    <string name="ic_battery_desc">Battery icon</string>
+    <string name="ic_soc_desc">SOC Info icon</string>
+    <string name="phone_hardware_desc">Phone hardware image</string>
+    <string name="network_img_desc">Network image</string>
 </resources>

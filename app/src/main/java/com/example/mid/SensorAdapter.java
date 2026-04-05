@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 @SuppressLint("SetTextI18n")
@@ -69,7 +70,7 @@ public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.ViewHolder
             activeListeners.add(listener);
         } else {
             holder.sensorData.setText("Data: Unavailable");
-            Log.e("SensorAdapter", "Failed to register: " + sensor.getName());
+            Log.e("SensorAdapter", "Failed to register: " + name);
         }
     }
 
@@ -99,7 +100,7 @@ public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.ViewHolder
     private String formatSensorData(float[] values, String unit) {
         StringBuilder data = new StringBuilder();
         for (float value : values) {
-            data.append(String.format("%.2f", value)).append(", ");
+            data.append(String.format(Locale.ROOT, "%.2f", value)).append(", ");
         }
         if (data.length() > 0) {
             data.delete(data.length() - 2, data.length()); // Remove the last ", "

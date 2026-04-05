@@ -40,30 +40,29 @@
         android:textSize="18sp"
         android:layout_marginTop="8dp"
         android:textStyle="bold"/>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="@color/divider_color"
         android:layout_marginBottom="16dp"/>
 
-    <!-- Add this after the last View divider -->
     <Button
         android:id="@+id/btnTestDisplay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Test Display Colors"
+        android:text="@string/btn_test_display_colors"
         android:layout_marginTop="16dp"
         android:padding="12dp"
         android:textSize="16sp"/>
 
-
-    <!-- Add this after the Test Display Colors button -->
     <Button
         android:id="@+id/btnTestBlocks"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Test Display Blocks"
+        android:text="@string/btn_test_display_blocks"
         android:layout_marginTop="8dp"
         android:padding="12dp"
         android:textSize="16sp"/>
+
 </LinearLayout>

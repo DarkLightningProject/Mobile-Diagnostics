@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.BatteryManager;
+import java.util.Locale;
 
 public class BatteryHelper {
 
@@ -40,7 +41,7 @@ public class BatteryHelper {
         // Voltage
         float voltage = batteryStatus.getIntExtra(BatteryManager.EXTRA_VOLTAGE, 0) / 1000f;
 
-        return String.format(
+        return String.format(Locale.ROOT,
                 "Status: %s\nHealth: %s\nSource: %s\nTech: %s\nTemp: %.1f°C\nVoltage: %.2fV\nLevel: %.1f%%",
                 status, health, powerSource, technology, temp, voltage, batteryPct
         );

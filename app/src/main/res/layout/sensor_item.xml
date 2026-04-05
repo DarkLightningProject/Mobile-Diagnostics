@@ -10,7 +10,7 @@
         android:id="@+id/sensorName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sensor Name"
+        android:text="@string/sensor_name_placeholder"
         android:textSize="18sp"
         android:textStyle="bold" />
 
@@ -18,21 +18,22 @@
         android:id="@+id/sensorType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Type: Unknown"
+        android:text="@string/sensor_type_unknown"
         android:textSize="14sp" />
 
     <TextView
         android:id="@+id/sensorVendor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Vendor: Unknown"
+        android:text="@string/sensor_vendor_unknown"
         android:textSize="14sp" />
 
     <TextView
         android:id="@+id/sensorData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Data: Waiting for update..."
+        android:text="@string/sensor_data_waiting"
         android:textSize="14sp"
         android:maxLines="3" />
+
 </LinearLayout>

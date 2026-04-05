@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Internal Storage"
+        android:text="@string/internal_storage"
         android:textStyle="bold"
         android:textSize="18sp"/>
 
@@ -22,7 +22,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="External Storage"
+        android:text="@string/external_storage"
         android:textStyle="bold"
         android:layout_marginTop="16dp"
         android:textSize="18sp"/>
@@ -32,4 +32,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"/>
+
 </LinearLayout>

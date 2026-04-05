@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -5,11 +6,10 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- SIM Slot Selection Dropdown -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Select SIM Slot:"
+        android:text="@string/label_select_sim_slot"
         android:textSize="16sp"
         android:textStyle="bold"/>
 
@@ -18,12 +18,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <!-- SIM Details -->
     <TextView
         android:id="@+id/simSlotText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="SIM Slot:"
+        android:text="@string/label_sim_slot"
         android:textSize="16sp"
         android:textStyle="bold"/>
 
@@ -31,7 +30,7 @@
         android:id="@+id/carrierText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Carrier:"
+        android:text="@string/label_carrier"
         android:textSize="16sp"/>
 
     <View
@@ -44,40 +43,41 @@
         android:id="@+id/countryText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Country:"
+        android:text="@string/label_country"
         android:textSize="16sp"/>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="@color/divider_color"
         android:layout_marginBottom="16dp"/>
 
-    <!-- Network Operator (renamed to simCodeText) -->
     <TextView
         android:id="@+id/simCodeText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Network Operator:"
+        android:text="@string/label_network_operator"
         android:textSize="16sp"/>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="@color/divider_color"
         android:layout_marginBottom="16dp"/>
 
-    <!-- SIM State -->
     <TextView
         android:id="@+id/volteText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="SIM State:"
+        android:text="@string/label_sim_state"
         android:textSize="16sp"/>
 
     <Button
         android:id="@+id/refreshButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Refresh SIM Info"
+        android:text="@string/btn_refresh_sim"
         android:layout_marginTop="10dp"
         android:layout_gravity="center_horizontal"/>
+
 </LinearLayout>

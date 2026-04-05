@@ -2,6 +2,7 @@ package com.example.mid.helpers;
 
 import android.content.Context;
 import android.graphics.Rect;
+import java.util.Locale;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 import android.view.WindowMetrics;
@@ -28,7 +29,7 @@ public class DisplayHelper {
         float widthInches = bounds.width() / metrics.xdpi;
         float heightInches = bounds.height() / metrics.ydpi;
         double diagonalInches = Math.sqrt(Math.pow(widthInches, 2) + Math.pow(heightInches, 2));
-        return String.format("%.1f inches", diagonalInches);
+        return String.format(Locale.ROOT, "%.1f inches", diagonalInches);
     }
 
     private static String getDensityName(int densityDpi) {

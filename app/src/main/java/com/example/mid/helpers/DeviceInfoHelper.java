@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Build;
 import android.os.StatFs;
 import android.provider.Settings;
-import android.telephony.TelephonyManager;
 import com.example.mid.database.DeviceInfo;
 import android.util.Log;
 import java.io.BufferedReader;
@@ -22,17 +21,9 @@ public class DeviceInfoHelper {
 
     @SuppressLint("HardwareIds")
     public String getIMEI() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            return Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-        } else {
-            TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-            if (telephonyManager != null) {
-                return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) ?
-                        telephonyManager.getMeid() :
-                        telephonyManager.getDeviceId();
-            }
-        }
-        return "Not Available";
+        // minSdk=30 (> Q=29): ANDROID_ID is the only non-privileged identifier available.
+        // getMeid/getDeviceId require READ_PRIVILEGED_PHONE_STATE which third-party apps cannot hold.
+        return Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
     public static DeviceInfo getDeviceDetails(Context context) {

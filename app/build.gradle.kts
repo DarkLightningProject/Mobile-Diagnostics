@@ -4,12 +4,12 @@ plugins {
 
 android {
     namespace = "com.example.mid"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.mid"
         minSdk = 30
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -32,21 +32,17 @@ android {
 }
 
 dependencies {
-
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation(libs.recyclerview)
+    implementation(libs.cardview)
+    implementation(libs.room.runtime)
+    annotationProcessor(libs.room.compiler)
+    implementation(libs.lifecycle.runtime.ktx)
+    implementation(libs.core)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    implementation ("androidx.cardview:cardview:1.0.0")
-    implementation ("androidx.room:room-runtime:2.5.0")
-    annotationProcessor ("androidx.room:room-compiler:2.5.0")
-    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-    implementation ("com.google.android.material:material:1.9.0")
-    implementation("androidx.core:core:1.3.0")
-
-
-    }
+}

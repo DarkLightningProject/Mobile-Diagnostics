@@ -2,8 +2,8 @@ package com.example.mid;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.WindowMetrics;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 import android.widget.Button;
@@ -13,9 +13,9 @@ import androidx.appcompat.app.AppCompatActivity;
 public class DisplayBlockTestActivity extends AppCompatActivity {
 
     private GridLayout blockGrid;
-    private final int[] colors = {Color.RED, Color.GREEN, Color.BLUE, Color.WHITE};
-    private final int INITIAL_COLOR = Color.WHITE;
-    private final int MARGIN_DP = 2; // 2dp separation lines
+    private static final int[] colors = {Color.RED, Color.GREEN, Color.BLUE, Color.WHITE};
+    private static final int INITIAL_COLOR = Color.WHITE;
+    private static final int MARGIN_DP = 2; // 2dp separation lines
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,13 +33,12 @@ public class DisplayBlockTestActivity extends AppCompatActivity {
         Button resetButton = findViewById(R.id.btnReset);
 
         // Get screen dimensions
-        DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        int screenWidth = metrics.widthPixels;
-        int screenHeight = metrics.heightPixels;
+        WindowMetrics windowMetrics = getWindowManager().getCurrentWindowMetrics();
+        int screenWidth = windowMetrics.getBounds().width();
+        int screenHeight = windowMetrics.getBounds().height();
 
         // Convert margin to pixels
-        int marginPx = (int) (MARGIN_DP * metrics.density);
+        int marginPx = (int) (MARGIN_DP * getResources().getDisplayMetrics().density);
 
         // Calculate block dimensions
         int blockWidth = (screenWidth - (2 * marginPx)) / 3;
@@ -97,8 +96,4 @@ public class DisplayBlockTestActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-    }
 }

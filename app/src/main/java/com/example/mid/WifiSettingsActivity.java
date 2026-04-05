@@ -8,6 +8,7 @@ import android.net.ConnectivityManager;
 import android.net.LinkProperties;
 import android.net.Network;
 import android.net.NetworkCapabilities;
+import android.net.TransportInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -28,6 +29,7 @@ import java.net.NetworkInterface;
 import java.net.Socket;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -103,7 +105,7 @@ public class WifiSettingsActivity extends AppCompatActivity {
 
                 @Override public void onCapabilitiesChanged(Network network, NetworkCapabilities caps) {
                     // Only place where getTransportInfo() returns unredacted WifiInfo on API 31+
-                    android.net.TransportInfo ti = caps.getTransportInfo();
+                    TransportInfo ti = caps.getTransportInfo();
                     lastKnownWifiInfo = (ti instanceof WifiInfo) ? (WifiInfo) ti : null;
                     mainHandler.post(WifiSettingsActivity.this::updateWifiDetails);
                 }
@@ -248,7 +250,7 @@ public class WifiSettingsActivity extends AppCompatActivity {
 
                 // Capture finals for lambda
                 final String displaySsid  = ssid;
-                final String displayBssid = validBssid ? bssid.toUpperCase() : "N/A";
+                final String displayBssid = validBssid ? bssid.toUpperCase(Locale.ROOT) : "N/A";
 
                 updateUi(() -> {
                     ((TextView) findViewById(R.id.ssidText)).setText("SSID: " + displaySsid);

@@ -6,11 +6,10 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- Battery Status -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Battery Status:"
+        android:text="@string/label_battery_status"
         android:textSize="16sp"
         android:textStyle="bold"/>
 
@@ -26,11 +25,10 @@
         android:background="@color/divider_color"
         android:layout_marginBottom="16dp"/>
 
-    <!-- Battery Health -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Health:"
+        android:text="@string/label_health"
         android:textSize="16sp"
         android:textStyle="bold"/>
 
@@ -46,11 +44,10 @@
         android:background="@color/divider_color"
         android:layout_marginBottom="16dp"/>
 
-    <!-- Power Source -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Power Source:"
+        android:text="@string/label_power_source"
         android:textSize="16sp"
         android:textStyle="bold"/>
 
@@ -66,11 +63,10 @@
         android:background="@color/divider_color"
         android:layout_marginBottom="16dp"/>
 
-    <!-- Voltage & Temperature -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Voltage and Temperature:"
+        android:text="@string/label_voltage_temp"
         android:textSize="16sp"
         android:textStyle="bold"/>
 
@@ -86,11 +82,10 @@
         android:background="@color/divider_color"
         android:layout_marginBottom="16dp"/>
 
-    <!-- Technology -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Technology:"
+        android:text="@string/label_technology"
         android:textSize="16sp"
         android:textStyle="bold"/>
 
