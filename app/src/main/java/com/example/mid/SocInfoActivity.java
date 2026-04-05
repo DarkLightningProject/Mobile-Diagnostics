@@ -31,8 +31,6 @@ public class SocInfoActivity extends AppCompatActivity {
     private boolean isMonitoring = true;
 
     // OpenGL Context
-    private GLSurfaceView glSurfaceView;
-
     // GPU Info
     private String gpuVendor = "Unknown";
     private String gpuRenderer = "Unknown";
@@ -61,7 +59,7 @@ public class SocInfoActivity extends AppCompatActivity {
 
     // Initialize OpenGL Context
     private void initializeOpenGLContext() {
-        glSurfaceView = new GLSurfaceView(this);
+        GLSurfaceView glSurfaceView = new GLSurfaceView(this);
         glSurfaceView.setEGLContextClientVersion(2);
         glSurfaceView.setRenderer(new GLSurfaceView.Renderer() {
             @Override

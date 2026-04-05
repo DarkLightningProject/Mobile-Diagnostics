@@ -99,23 +99,23 @@ public class WifiSettingsActivity extends AppCompatActivity {
             networkCallback = new ConnectivityManager.NetworkCallback(
                     ConnectivityManager.NetworkCallback.FLAG_INCLUDE_LOCATION_INFO) {
 
-                @Override public void onAvailable(Network network) {
+                @Override public void onAvailable(@NonNull Network network) {
                     mainHandler.post(WifiSettingsActivity.this::updateWifiDetails);
                 }
 
-                @Override public void onCapabilitiesChanged(Network network, NetworkCapabilities caps) {
+                @Override public void onCapabilitiesChanged(@NonNull Network network, @NonNull NetworkCapabilities caps) {
                     // Only place where getTransportInfo() returns unredacted WifiInfo on API 31+
                     TransportInfo ti = caps.getTransportInfo();
                     lastKnownWifiInfo = (ti instanceof WifiInfo) ? (WifiInfo) ti : null;
                     mainHandler.post(WifiSettingsActivity.this::updateWifiDetails);
                 }
 
-                @Override public void onLinkPropertiesChanged(Network network, LinkProperties lp) {
+                @Override public void onLinkPropertiesChanged(@NonNull Network network, @NonNull LinkProperties lp) {
                     // Fires on IP changes: VPN connect/disconnect, DHCP renewal
                     mainHandler.post(WifiSettingsActivity.this::updateWifiDetails);
                 }
 
-                @Override public void onLost(Network network) {
+                @Override public void onLost(@NonNull Network network) {
                     lastKnownWifiInfo = null;
                     mainHandler.post(WifiSettingsActivity.this::updateWifiDetails);
                 }
@@ -125,19 +125,19 @@ public class WifiSettingsActivity extends AppCompatActivity {
             // via WifiManager.getConnectionInfo() inside updateWifiDetails().
             networkCallback = new ConnectivityManager.NetworkCallback() {
 
-                @Override public void onAvailable(Network network) {
+                @Override public void onAvailable(@NonNull Network network) {
                     mainHandler.post(WifiSettingsActivity.this::updateWifiDetails);
                 }
 
-                @Override public void onCapabilitiesChanged(Network network, NetworkCapabilities caps) {
+                @Override public void onCapabilitiesChanged(@NonNull Network network, @NonNull NetworkCapabilities caps) {
                     mainHandler.post(WifiSettingsActivity.this::updateWifiDetails);
                 }
 
-                @Override public void onLinkPropertiesChanged(Network network, LinkProperties lp) {
+                @Override public void onLinkPropertiesChanged(@NonNull Network network, @NonNull LinkProperties lp) {
                     mainHandler.post(WifiSettingsActivity.this::updateWifiDetails);
                 }
 
-                @Override public void onLost(Network network) {
+                @Override public void onLost(@NonNull Network network) {
                     mainHandler.post(WifiSettingsActivity.this::updateWifiDetails);
                 }
             };
@@ -276,6 +276,7 @@ public class WifiSettingsActivity extends AppCompatActivity {
 
     /** Returns non-redacted WifiInfo. API 31+ reads from last callback capture; API 30 uses WifiManager. */
     @SuppressLint("deprecation")
+    @SuppressWarnings("deprecation")
     private WifiInfo getWifiInfo() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             return lastKnownWifiInfo;

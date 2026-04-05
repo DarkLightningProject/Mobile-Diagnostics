@@ -105,7 +105,7 @@ public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.ViewHolder
         if (data.length() > 0) {
             data.delete(data.length() - 2, data.length()); // Remove the last ", "
         }
-        return data.toString() + " " + unit;
+        return data + " " + unit;
     }
 
     private String getTypeName(int type) {

@@ -23,7 +23,8 @@
     <uses-feature android:name="android.hardware.sensor.stepcounter"/>
 
     <!-- Call Log Permission -->
-    <uses-permission android:name="android.permission.READ_CALL_LOG" />
+    <uses-permission android:name="android.permission.READ_CALL_LOG"
+        tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
 
     <application
