@@ -1,6 +1,7 @@
 package com.example.mid;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
@@ -30,6 +31,7 @@ import java.util.Enumeration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+@SuppressLint("SetTextI18n")
 public class WifiSettingsActivity extends AppCompatActivity {
 
     // Two executors: fast WiFi reads never block behind slow ping/jitter I/O
@@ -43,8 +45,9 @@ public class WifiSettingsActivity extends AppCompatActivity {
     // Captured inside onCapabilitiesChanged (API 31+) where it is non-redacted
     private volatile WifiInfo lastKnownWifiInfo = null;
 
-    private static final long INTERNET_UPDATE_INTERVAL = 5000; // ms
-    private static final int  LOCATION_PERMISSION_REQUEST = 1001;
+    private static final long   INTERNET_UPDATE_INTERVAL  = 5000; // ms
+    private static final int    LOCATION_PERMISSION_REQUEST = 1001;
+    private static final String PING_HOST                  = "8.8.8.8";
 
     private final Runnable internetUpdateRunnable = new Runnable() {
         @Override public void run() {
@@ -209,8 +212,14 @@ public class WifiSettingsActivity extends AppCompatActivity {
 
                 WifiInfo wifiInfo = getWifiInfo();
 
-                if (wifiInfo == null || wifiInfo.getNetworkId() == -1) {
-                    // Connected to WiFi but info not yet available — show title, clear fields
+                if (wifiInfo == null) {
+                    // API 31+: lastKnownWifiInfo not populated yet — onCapabilitiesChanged
+                    // always follows onAvailable, so just update the title and wait.
+                    // Do NOT call clearWifiDetails() here; that causes the N/A flash.
+                    updateConnectionTitle(true, false);
+                    return;
+                }
+                if (wifiInfo.getNetworkId() == -1) {
                     clearWifiDetails();
                     updateConnectionTitle(true, false);
                     return;
@@ -264,10 +273,12 @@ public class WifiSettingsActivity extends AppCompatActivity {
     }
 
     /** Returns non-redacted WifiInfo. API 31+ reads from last callback capture; API 30 uses WifiManager. */
+    @SuppressLint("deprecation")
     private WifiInfo getWifiInfo() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             return lastKnownWifiInfo;
         }
+        // getConnectionInfo() is deprecated at API 31, but this branch only runs on API < 31.
         WifiManager wm = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         return (wm != null) ? wm.getConnectionInfo() : null;
     }
@@ -309,8 +320,8 @@ public class WifiSettingsActivity extends AppCompatActivity {
                                 : "Internet: Not Connected ❌ (No Active Data)"));
 
                 if (hasInternet) {
-                    String latency = getNetworkLatency("8.8.8.8");
-                    String jitter  = getJitter("8.8.8.8");
+                    String latency = getNetworkLatency();
+                    String jitter  = getJitter();
                     updateUi(() -> {
                         ((TextView) findViewById(R.id.pingText)).setText("Ping: " + latency + " ms");
                         ((TextView) findViewById(R.id.jitterText)).setText("Jitter: " + jitter + " ms");
@@ -340,7 +351,7 @@ public class WifiSettingsActivity extends AppCompatActivity {
             // InetAddress.isReachable() uses ICMP/TCP-7 which is blocked on non-rooted Android.
             // Use TCP connect to port 53 (DNS) — same approach as ping measurement.
             try (Socket socket = new Socket()) {
-                socket.connect(new InetSocketAddress("8.8.8.8", 53), 1500);
+                socket.connect(new InetSocketAddress(PING_HOST, 53), 1500);
                 return true;
             }
         } catch (Exception e) {
@@ -388,26 +399,26 @@ public class WifiSettingsActivity extends AppCompatActivity {
         }
     }
 
-    private long measureTcpLatency(String host) throws Exception {
+    private long measureTcpLatency() throws Exception {
         long start = System.currentTimeMillis();
         try (Socket socket = new Socket()) {
-            socket.connect(new InetSocketAddress(host, 53), 1000);
+            socket.connect(new InetSocketAddress(PING_HOST, 53), 1000);
         }
         return System.currentTimeMillis() - start;
     }
 
-    private String getNetworkLatency(String host) {
+    private String getNetworkLatency() {
         try {
-            return String.valueOf(measureTcpLatency(host));
+            return String.valueOf(measureTcpLatency());
         } catch (Exception e) {
             return "N/A";
         }
     }
 
-    private String getJitter(String host) {
+    private String getJitter() {
         try {
             long[] times = new long[5];
-            for (int i = 0; i < 5; i++) times[i] = measureTcpLatency(host);
+            for (int i = 0; i < 5; i++) times[i] = measureTcpLatency();
             long max = Long.MIN_VALUE, min = Long.MAX_VALUE;
             for (long t : times) {
                 if (t > max) max = t;

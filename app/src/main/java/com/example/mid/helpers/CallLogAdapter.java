@@ -1,5 +1,6 @@
 package com.example.mid.helpers;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import com.example.mid.R;
 
 import java.util.List;
 
+@SuppressLint("SetTextI18n")
 public class CallLogAdapter extends BaseAdapter {
     private final Context context;
     private final List<CallLogEntry> callLogs;

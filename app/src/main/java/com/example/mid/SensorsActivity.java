@@ -1,7 +1,6 @@
 package com.example.mid;
 
 import android.hardware.Sensor;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,13 +31,22 @@ public class SensorsActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         // Unregister all active sensor listeners to save battery
-        sensorManager.unregisterListener((SensorEventListener) null);
+        if (adapter != null) adapter.unregisterAll();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // Re-trigger binding so listeners are re-registered for visible items
-        if (adapter != null) adapter.notifyDataSetChanged();
+        // Re-register listeners for all visible items
+        if (adapter != null) {
+            adapter.notifyItemRangeChanged(0, adapter.getItemCount());
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Safety net: release any listeners not yet cleaned up
+        if (adapter != null) adapter.unregisterAll();
     }
 }

@@ -22,8 +22,8 @@ public class StorageTestActivity extends AppCompatActivity {
         externalText.setText("Loading...");
 
         executorService.execute(() -> {
-            String internal = StorageHelper.getInternalStorageInfo();
-            String external = StorageHelper.getExternalStorageInfo();
+            String internal = StorageHelper.getInternalStorageInfo(StorageTestActivity.this);
+            String external = StorageHelper.getExternalStorageInfo(StorageTestActivity.this);
             runOnUiThread(() -> {
                 internalText.setText(internal);
                 externalText.setText(external);

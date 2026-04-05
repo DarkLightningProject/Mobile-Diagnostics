@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+@SuppressLint("SetTextI18n")
 public class SimSettingsActivity extends AppCompatActivity {
     private TextView simSlotText, carrierText, countryText, simCodeText, volteText;
     private Spinner simSlotSpinner;

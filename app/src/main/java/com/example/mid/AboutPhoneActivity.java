@@ -1,5 +1,6 @@
 package com.example.mid;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.pm.ConfigurationInfo;
 import android.content.pm.PackageInfo;
@@ -16,6 +17,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+@SuppressLint("SetTextI18n")
 public class AboutPhoneActivity extends AppCompatActivity {
     private TextView titleText;
     private TextView deviceNameText;

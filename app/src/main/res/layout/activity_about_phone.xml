@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:background="@android:color/white">
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,8 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
-            app:cardBackgroundColor="@android:color/holo_blue_light">
+            app:cardElevation="4dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -31,7 +29,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Device Information"
-                    android:textColor="@android:color/black"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:paddingBottom="8dp" />
@@ -39,7 +36,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@android:color/darker_gray"
+                    android:background="@color/divider_color"
                     android:layout_marginBottom="8dp" />
 
                 <TextView
@@ -47,7 +44,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Device: "
-                    android:textColor="@android:color/black"
                     android:textSize="16sp"
                     android:paddingBottom="8dp" />
 
@@ -56,7 +52,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Manufacturer: "
-                    android:textColor="@android:color/black"
                     android:textSize="16sp"
                     android:paddingBottom="8dp" />
 
@@ -65,7 +60,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Android Version: "
-                    android:textColor="@android:color/black"
                     android:textSize="16sp"
                     android:paddingBottom="8dp" />
 
@@ -74,7 +68,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Kernel Version: "
-                    android:textColor="@android:color/black"
                     android:textSize="16sp"
                     android:paddingBottom="8dp" />
 
@@ -83,7 +76,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="IMEI: "
-                    android:textColor="@android:color/black"
                     android:textSize="16sp"
                     android:paddingBottom="8dp" />
 
@@ -92,7 +84,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Total RAM: "
-                    android:textColor="@android:color/black"
                     android:textSize="16sp"
                     android:paddingBottom="8dp" />
 
@@ -101,7 +92,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Internal Storage: "
-                    android:textColor="@android:color/black"
                     android:textSize="16sp"
                     android:paddingBottom="8dp" />
 
@@ -110,7 +100,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Model Number: "
-                    android:textColor="@android:color/black"
                     android:textSize="16sp"
                     android:paddingBottom="8dp" />
 
@@ -119,7 +108,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Board: "
-                    android:textColor="@android:color/black"
                     android:textSize="16sp"
                     android:paddingBottom="8dp" />
 
@@ -128,7 +116,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="OpenGL ES: "
-                    android:textColor="@android:color/black"
                     android:textSize="16sp"
                     android:paddingBottom="8dp" />
 
@@ -137,7 +124,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="API Level: "
-                    android:textColor="@android:color/black"
                     android:textSize="16sp"
                     android:paddingBottom="8dp" />
 
@@ -146,7 +132,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Kernel Architecture: "
-                    android:textColor="@android:color/black"
                     android:textSize="16sp"
                     android:paddingBottom="8dp" />
 
@@ -155,7 +140,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Root Access: "
-                    android:textColor="@android:color/black"
                     android:textSize="16sp"
                     android:paddingBottom="8dp" />
 
@@ -164,7 +148,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Google Play Services: "
-                    android:textColor="@android:color/black"
                     android:textSize="16sp"
                     android:paddingBottom="8dp" />
 
@@ -173,7 +156,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="System Uptime: "
-                    android:textColor="@android:color/black"
                     android:textSize="16sp"
                     android:paddingBottom="8dp" />
 

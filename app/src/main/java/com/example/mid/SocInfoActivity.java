@@ -1,5 +1,6 @@
 package com.example.mid;
 
+import android.annotation.SuppressLint;
 import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import java.util.concurrent.Executors;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+@SuppressLint("SetTextI18n")
 public class SocInfoActivity extends AppCompatActivity {
     // UI Components
     private TextView cpuInfoText;

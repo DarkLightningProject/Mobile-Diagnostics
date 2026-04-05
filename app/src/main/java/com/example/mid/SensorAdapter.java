@@ -1,5 +1,6 @@
 package com.example.mid;
 
+import android.annotation.SuppressLint;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -11,11 +12,16 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+@SuppressLint("SetTextI18n")
 public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.ViewHolder> {
     private final List<Sensor> sensorList;
     private final SensorManager sensorManager;
+    // Tracks every live listener so unregisterAll() can release them all at once
+    private final Set<SensorEventListener> activeListeners = new HashSet<>();
 
     public SensorAdapter(List<Sensor> sensorList, SensorManager sensorManager) {
         this.sensorList = sensorList;
@@ -34,13 +40,16 @@ public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.ViewHolder
         // Unregister previous listener before binding a new sensor to this view
         if (holder.currentListener != null) {
             sensorManager.unregisterListener(holder.currentListener);
+            activeListeners.remove(holder.currentListener);
             holder.currentListener = null;
         }
 
         final Sensor sensor = this.sensorList.get(position);
-        holder.sensorName.setText(sensor.getName());
+        String name   = sensor.getName()   != null ? sensor.getName()   : "Unknown";
+        String vendor = sensor.getVendor() != null ? sensor.getVendor() : "Unknown";
+        holder.sensorName.setText(name);
         holder.sensorType.setText("Type: " + getTypeName(sensor.getType()));
-        holder.sensorVendor.setText("Vendor: " + sensor.getVendor());
+        holder.sensorVendor.setText("Vendor: " + vendor);
         holder.sensorData.setText("Data: Waiting...");
 
         SensorEventListener listener = new SensorEventListener() {
@@ -56,18 +65,28 @@ public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.ViewHolder
 
         holder.setListener(listener);
         boolean isRegistered = sensorManager.registerListener(listener, sensor, SensorManager.SENSOR_DELAY_NORMAL);
-        if (!isRegistered) {
+        if (isRegistered) {
+            activeListeners.add(listener);
+        } else {
             holder.sensorData.setText("Data: Unavailable");
             Log.e("SensorAdapter", "Failed to register: " + sensor.getName());
         }
     }
 
+    /** Unregisters every active sensor listener. Call from onPause and onDestroy. */
+    public void unregisterAll() {
+        for (SensorEventListener l : activeListeners) {
+            sensorManager.unregisterListener(l);
+        }
+        activeListeners.clear();
+    }
+
     @Override
     public void onViewRecycled(@NonNull ViewHolder holder) {
         super.onViewRecycled(holder);
-        // Unregister listener when the view is recycled
         if (holder.currentListener != null) {
             sensorManager.unregisterListener(holder.currentListener);
+            activeListeners.remove(holder.currentListener);
             holder.currentListener = null;
         }
     }

@@ -1,5 +1,6 @@
 package com.example.mid;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mid.helpers.BatteryHelper;
 
+@SuppressLint("SetTextI18n")
 public class BatteryActivity extends AppCompatActivity {
     private TextView batteryStatusText, batteryHealthText, powerSourceText, voltageTempText, technologyText;
 
