@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.mid"
+    namespace = "com.darklightning.diagnostics"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.mid"
+        applicationId = "com.darklightning.diagnostics"
         minSdk = 30
         targetSdk = 36
         versionCode = 1

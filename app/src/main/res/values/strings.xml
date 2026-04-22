@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MID</string>
+    <string name="app_name">Device Diagnostics</string>
 
     <!-- Navigation / Dashboard -->
     <string name="dashboard">Dashboard</string>
