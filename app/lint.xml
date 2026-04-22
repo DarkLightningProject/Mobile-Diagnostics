@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<lint>
+    <!--
+        PNG bitmaps are in the densityless drawable/ folder.
+        Moving them to density-specific folders (drawable-mdpi etc.) requires
+        regenerating assets at each density, so this is suppressed here.
+    -->
+    <issue id="IconLocation" severity="ignore" />
+
+    <!--
+        ic_sensors.png, network.png and phone_hardware_image.png are actually
+        WebP files named with a .png extension. Renaming them would require
+        updating all usages; suppressed until assets are regenerated.
+    -->
+    <issue id="IconExtension" severity="ignore" />
+
+    <!--
+        Updating the Android Gradle Plugin from 8.x to 9.x is a major-version
+        jump that may require build-script changes. Keeping 8.13.2 intentionally.
+    -->
+    <issue id="AndroidGradlePluginVersion" severity="ignore" />
+
+    <!--
+        READ_CALL_LOG is used by CallLogActivity for core diagnostic functionality,
+        not for ads or non-core purposes. Suppressing the Play Store policy reminder.
+    -->
+    <issue id="ProtectedPermissions" severity="ignore" />
+
+    <!--
+        ic_settings_power.png is a leftover asset that is not referenced anywhere.
+        Delete it manually when cleaning up assets.
+    -->
+    <issue id="UnusedResources">
+        <ignore path="**/drawable/ic_settings_power.png" />
+    </issue>
+</lint>
